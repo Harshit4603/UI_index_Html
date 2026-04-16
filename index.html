@@ -324,7 +324,7 @@
       }
     }
 
-    // Render Messages
+        // Render Messages
     function renderMessages() {
       const container = document.getElementById("chat-container");
       container.innerHTML = "";
@@ -332,6 +332,7 @@
       messages.forEach((msg, index) => {
         const div = document.createElement("div");
         div.className = `flex ${msg.role === "user" ? "justify-end" : "justify-start"} ${focusedIndex === index ? "focused" : ""}`;
+
         div.innerHTML = `
           <div class="max-w-[82%]">
             <div class="message-bubble ${msg.role === "user" ? "user-bubble" : "bot-bubble"}">
@@ -360,14 +361,6 @@
             
             <div class="flex items-center gap-3 mt-4 ${msg.role === "user" ? "justify-end" : "justify-start"}">
               <span class="text-xs text-gray-400">${msg.time}</span>
-              <button onclick="copyMessage('${index}')" class="text-gray-400 hover:text-blue-600">
-                <i class="fa-solid fa-copy"></i>
-              </button>
-            </div>
-          </div>
-        `;            
-            <div class="flex items-center gap-3 mt-2 ${msg.role === "user" ? "justify-end" : "justify-start"}">
-              <span class="text-xs text-gray-400">${msg.time}</span>
               <button onclick="copyMessage('${index}')" 
                 class="text-gray-400 hover:text-blue-600 transition">
                 <i class="fa-solid fa-copy"></i>
@@ -375,6 +368,7 @@
             </div>
           </div>
         `;
+
         container.appendChild(div);
       });
 
@@ -385,7 +379,7 @@
       document.getElementById("position").textContent = 
         messages.length > 0 ? `${focusedIndex + 1} / ${messages.length}` : "0 / 0";
     }
-
+    
     function copyMessage(index) {
       const text = messages[index].content;
       navigator.clipboard.writeText(text).then(() => {
@@ -512,14 +506,15 @@
       }
     }
 
-    // Keyboard support
-    document.getElementById("user-input").addEventListener("keypress", (e) => {
+    // Keyboard support - Enter to send
+    const inputField = document.getElementById("user-input");
+    inputField.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         sendMessage();
       }
     });
-
+    
     // Initialize
     window.onload = () => {
       loadData();
