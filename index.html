@@ -20,19 +20,24 @@
     .chat-container {
       max-width: 100%;
       margin: 0 auto;
-      padding: 20px 16px 120px;   /* reduced side padding → bubbles closer to edge */
+      padding: 20px 20px 120px;
+      overflow-y: auto;           /* Keep scrolling only when needed */
+      scrollbar-width: none;      /* Hide scrollbar in Firefox */
     }
-    
+
+    /* Hide scrollbar in Chrome, Edge, Safari */
+    .chat-container::-webkit-scrollbar {
+      display: none;
+    }    
     .message-bubble {
-      max-width: 92%;               /* much wider bubbles */
+      max-width: 94%;               /* Wider bubbles */
       padding: 16px 24px;
       border-radius: 20px;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08);
       word-break: break-word;
       overflow-wrap: break-word;
       white-space: pre-wrap;
-    }
-    
+    }    
     .bot-bubble {
       background: white;
       border: 1px solid #e2e8f0;
