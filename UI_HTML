@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SalesAssist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600&display=swap');
+
+    :root {
+      --navy: #0A0F1E;
+      --accent: #63B3ED;
+    }
+
+    body {
+      font-family: 'Inter', system_ui, sans-serif;
+      background: linear-gradient(135deg, #F0F2F8 0%, #E2E8F0 100%);
+    }
+
+    .serif { font-family: 'Playfair Display', Georgia, serif; }
+
+    .chat-container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding-bottom: 120px;
+    }
+
+    .message-bubble {
+      max-width: 72%;
+      padding: 14px 18px;
+      border-radius: 18px;
+      position: relative;
+    }
+
+    .bot-bubble {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px 18px 18px 4px;
+    }
+
+    .user-bubble {
+      background: #0A0F1E;
+      color: white;
+      border-radius: 18px 18px 4px 18px;
+      margin-left: auto;
+    }
+
+    .sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .history-item {
+      transition: all 0.2s;
+    }
+
+    .history-item:hover {
+      background: #f1f5f9;
+    }
+
+    .focused {
+      background: #dbeafe;
+      border-left: 4px solid #3B82F6;
+    }
+
+    .typing {
+      display: flex;
+      gap: 6px;
+    }
+
+    .typing span {
+      height: 7px;
+      width: 7px;
+      background: #64748b;
+      border-radius: 50%;
+      animation: typingBounce 1.2s infinite;
+    }
+
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-6px); }
+    }
+
+    .toast {
+      animation: toastIn 0.3s ease forwards;
+    }
+
+    @keyframes toastIn {
+      from { transform: translate(-50%, 20px); opacity: 0; }
+      to { transform: translate(-50%, 0); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- HEADER -->
+  <header class="bg-[#0A0F1E] text-white sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center text-2xl cursor-pointer hover:bg-white/10 rounded-xl">☰</div>
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 bg-blue-500 rounded-2xl flex items-center justify-center text-white text-2xl">◈</div>
+          <div>
+            <div class="serif text-2xl font-semibold tracking-tight">SalesAssist</div>
+            <div class="text-xs text-emerald-400 flex items-center gap-1.5">
+              <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+              Online
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Role Switch -->
+        <div class="flex bg-white/10 rounded-3xl p-1 text-sm">
+          <button onclick="switchRole('rep')" id="btn-rep"
+            class="px-5 py-1.5 rounded-3xl transition-all">Sales Rep</button>
+          <button onclick="switchRole('admin')" id="btn-admin"
+            class="px-5 py-1.5 rounded-3xl transition-all flex items-center gap-2">
+            Admin <span id="admin-gold" class="text-amber-400">★</span>
+          </button>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex items-center gap-2 bg-white/10 rounded-3xl px-2 py-1">
+          <button onclick="prevMessage()" class="w-9 h-9 hover:bg-white/10 rounded-2xl flex items-center justify-center">↑</button>
+          <div class="text-sm font-medium px-3" id="position">1 / 1</div>
+          <button onclick="nextMessage()" class="w-9 h-9 hover:bg-white/10 rounded-2xl flex items-center justify-center">↓</button>
+        </div>
+
+        <button onclick="newChat()" 
+          class="bg-white text-[#0A0F1E] px-5 py-2 rounded-3xl font-medium flex items-center gap-2 hover:shadow-lg transition">
+          <i class="fa-solid fa-plus"></i> New Chat
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex h-[calc(100vh-73px)]">
+
+    <!-- SIDEBAR -->
+    <div id="sidebar" class="sidebar w-80 bg-white border-r border-gray-200 h-full fixed shadow-2xl z-50 overflow-y-auto">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-semibold">Conversations</h2>
+          <button onclick="toggleSidebar()" class="text-2xl">✕</button>
+        </div>
+
+        <!-- Admin Clear All -->
+        <div id="admin-actions" class="hidden mb-6">
+          <button onclick="clearAllChats()" 
+            class="w-full bg-red-50 hover:bg-red-100 text-red-600 py-3 rounded-2xl text-sm font-medium transition">
+            <i class="fa-solid fa-trash"></i> Clear All Chats
+          </button>
+        </div>
+
+        <div id="chat-history"></div>
+      </div>
+    </div>
+
+    <!-- MAIN CHAT AREA -->
+    <div class="flex-1 flex flex-col" style="margin-left: 0;">
+      <div id="chat-container" class="chat-container flex-1 overflow-y-auto p-6 space-y-8"></div>
+
+      <!-- INPUT AREA -->
+      <div class="sticky bottom-0 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent pt-8 pb-6">
+        <div class="max-w-3xl mx-auto px-6">
+          <div class="relative">
+            <textarea id="user-input" rows="1"
+              class="w-full resize-none rounded-3xl border border-gray-300 focus:border-blue-500 focus:ring-0 px-7 py-5 pr-16 text-base shadow-sm"
+              placeholder="Ask me anything about sales..."></textarea>
+            
+            <button onclick="sendMessage()" 
+              class="absolute right-4 bottom-4 bg-blue-600 hover:bg-blue-700 text-white w-10 h-10 rounded-2xl flex items-center justify-center transition">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+          <p class="text-center text-xs text-gray-400 mt-3">SalesAssist • Powered by AI</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 toast">
+    <span id="toast-text"></span>
+  </div>
+
+  <script>
+    // ==================== CONFIG ====================
+    const BACKEND_URL = "https://sales-chatbot-7wsa.onrender.com";
+    let currentRole = "rep"; // "rep" or "admin"
+    let currentChatId = null;
+    let messages = [];
+    let chatHistory = {};
+    let focusedIndex = -1;
+
+    // Load from localStorage
+    function loadData() {
+      const saved = localStorage.getItem(`salesassist_${currentRole}`);
+      if (saved) {
+        chatHistory = JSON.parse(saved);
+      }
+      renderChatHistory();
+    }
+
+    function saveData() {
+      localStorage.setItem(`salesassist_${currentRole}`, JSON.stringify(chatHistory));
+    }
+
+    // Switch Role
+    function switchRole(role) {
+      currentRole = role;
+      document.getElementById("btn-rep").classList.toggle("bg-white", role === "rep");
+      document.getElementById("btn-rep").classList.toggle("text-black", role === "rep");
+      document.getElementById("btn-admin").classList.toggle("bg-white", role === "admin");
+      document.getElementById("btn-admin").classList.toggle("text-black", role === "admin");
+      
+      document.getElementById("admin-actions").classList.toggle("hidden", role !== "admin");
+      
+      loadData();
+      newChat();
+    }
+
+    // Toggle Sidebar
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("open");
+    }
+
+    // Render Chat History
+    function renderChatHistory() {
+      const container = document.getElementById("chat-history");
+      container.innerHTML = "";
+
+      const groups = { Today: [], Yesterday: [], Earlier: [] };
+
+      Object.keys(chatHistory).forEach(id => {
+        const chat = chatHistory[id];
+        const date = new Date(chat.timestamp);
+        const diffDays = Math.floor((Date.now() - date) / (1000*60*60*24));
+
+        let group = "Earlier";
+        if (diffDays === 0) group = "Today";
+        else if (diffDays === 1) group = "Yesterday";
+
+        groups[group].push({ id, ...chat });
+      });
+
+      Object.keys(groups).forEach(group => {
+        if (groups[group].length === 0) return;
+
+        const div = document.createElement("div");
+        div.className = "mb-6";
+        div.innerHTML = `<p class="text-xs uppercase tracking-widest text-gray-400 mb-2">${group}</p>`;
+
+        groups[group].forEach(chat => {
+          const item = document.createElement("div");
+          item.className = `history-item px-4 py-3 rounded-2xl mb-1 cursor-pointer flex justify-between items-center ${chat.id === currentChatId ? 'bg-blue-50' : ''}`;
+          item.innerHTML = `
+            <div class="flex-1 truncate">
+              <div class="font-medium text-sm">${chat.title || "New Conversation"}</div>
+              <div class="text-xs text-gray-500">${new Date(chat.timestamp).toLocaleDateString()}</div>
+            </div>
+            <button onclick="deleteChat('${chat.id}'); event.stopImmediatePropagation()" 
+              class="text-red-400 hover:text-red-600 p-1">
+              <i class="fa-solid fa-trash text-xs"></i>
+            </button>
+          `;
+          item.onclick = () => loadChat(chat.id);
+          div.appendChild(item);
+        });
+        container.appendChild(div);
+      });
+    }
+
+    function generateTitle(firstMessage) {
+      return firstMessage.length > 40 ? firstMessage.substring(0, 37) + "..." : firstMessage;
+    }
+
+    // New Chat
+    function newChat() {
+      currentChatId = "chat_" + Date.now();
+      messages = [];
+      focusedIndex = -1;
+      renderMessages();
+      renderChatHistory();
+    }
+
+    // Load specific chat
+    function loadChat(chatId) {
+      currentChatId = chatId;
+      messages = chatHistory[chatId].messages || [];
+      focusedIndex = messages.length > 0 ? 0 : -1;
+      renderMessages();
+      renderChatHistory();
+      toggleSidebar();
+    }
+
+    function deleteChat(chatId) {
+      if (confirm("Delete this conversation?")) {
+        delete chatHistory[chatId];
+        if (currentChatId === chatId) newChat();
+        saveData();
+        renderChatHistory();
+      }
+    }
+
+    function clearAllChats() {
+      if (confirm("Clear ALL chats for this admin session?")) {
+        chatHistory = {};
+        saveData();
+        newChat();
+      }
+    }
+
+    // Render Messages
+    function renderMessages() {
+      const container = document.getElementById("chat-container");
+      container.innerHTML = "";
+
+      messages.forEach((msg, index) => {
+        const div = document.createElement("div");
+        div.className = `flex ${msg.role === "user" ? "justify-end" : "justify-start"} ${focusedIndex === index ? "focused" : ""}`;
+        div.innerHTML = `
+          <div class="max-w-[72%]">
+            <div class="message-bubble ${msg.role === "user" ? "user-bubble" : "bot-bubble"}">
+              ${msg.content}
+            </div>
+            
+            <div class="flex items-center gap-3 mt-2 ${msg.role === "user" ? "justify-end" : "justify-start"}">
+              <span class="text-xs text-gray-400">${msg.time}</span>
+              <button onclick="copyMessage('${index}')" 
+                class="text-gray-400 hover:text-blue-600 transition">
+                <i class="fa-solid fa-copy"></i>
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+
+      // Scroll to bottom
+      container.scrollTop = container.scrollHeight;
+
+      // Update position counter
+      document.getElementById("position").textContent = 
+        messages.length > 0 ? `${focusedIndex + 1} / ${messages.length}` : "0 / 0";
+    }
+
+    function copyMessage(index) {
+      const text = messages[index].content;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("✓ Copied to clipboard");
+      });
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      document.getElementById("toast-text").innerHTML = message;
+      toast.classList.remove("hidden");
+      setTimeout(() => toast.classList.add("hidden"), 2000);
+    }
+
+    // Navigation
+    function prevMessage() {
+      if (focusedIndex > 0) {
+        focusedIndex--;
+        renderMessages();
+      }
+    }
+
+    function nextMessage() {
+      if (focusedIndex < messages.length - 1) {
+        focusedIndex++;
+        renderMessages();
+      }
+    }
+
+    // Send Message
+    async function sendMessage() {
+      const input = document.getElementById("user-input");
+      const query = input.value.trim();
+      if (!query) return;
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+      // Add user message
+      messages.push({
+        role: "user",
+        content: query,
+        time: timeStr
+      });
+
+      // Auto title first message
+      if (messages.length === 1) {
+        const title = generateTitle(query);
+        chatHistory[currentChatId] = {
+          title: title,
+          timestamp: Date.now(),
+          messages: messages
+        };
+      } else if (chatHistory[currentChatId]) {
+        chatHistory[currentChatId].messages = messages;
+      }
+
+      renderMessages();
+      saveData();
+
+      // Clear input
+      input.value = "";
+
+      // Show typing
+      const typingDiv = document.createElement("div");
+      typingDiv.id = "typing-indicator";
+      typingDiv.className = "flex justify-start mt-6";
+      typingDiv.innerHTML = `
+        <div class="bot-bubble px-6 py-4">
+          <div class="typing">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      `;
+      document.getElementById("chat-container").appendChild(typingDiv);
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/chat`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            employee_id: currentRole === "admin" ? "ADMIN001" : "EMP001",
+            query: query,
+            session_id: null // You can enhance this later
+          })
+        });
+
+        const data = await res.json();
+
+        // Remove typing
+        typingDiv.remove();
+
+        const botTime = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+        messages.push({
+          role: "assistant",
+          content: data.answer || "Sorry, I couldn't process that.",
+          time: botTime,
+          sources: data.db_sources || []
+        });
+
+        if (chatHistory[currentChatId]) {
+          chatHistory[currentChatId].messages = messages;
+        }
+
+        saveData();
+        renderMessages();
+
+      } catch (err) {
+        typingDiv.remove();
+        messages.push({
+          role: "assistant",
+          content: "Error connecting to server. Please try again.",
+          time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+        });
+        renderMessages();
+      }
+    }
+
+    // Keyboard support
+    document.getElementById("user-input").addEventListener("keypress", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Initialize
+    window.onload = () => {
+      loadData();
+      if (!currentChatId) newChat();
+      
+      // Default to Sales Rep
+      switchRole("rep");
+    };
+  </script>
+</body>
+</html>
