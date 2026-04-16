@@ -8,100 +8,58 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600&display=swap');
-
-    :root {
-      --navy: #0A0F1E;
-      --accent: #63B3ED;
-    }
-
+    
     body {
       font-family: 'Inter', system_ui, sans-serif;
       background: linear-gradient(135deg, #F0F2F8 0%, #E2E8F0 100%);
+      overflow-x: hidden;
     }
-    body { overflow-x: hidden; }   /* ← NEW - keeps everything on screen */
-
+    
     .serif { font-family: 'Playfair Display', Georgia, serif; }
-
+    
     .chat-container {
-      max-width: 900px;
+      max-width: 100%;
       margin: 0 auto;
-      padding-bottom: 120px;
+      padding: 20px 16px 120px;   /* reduced side padding → bubbles closer to edge */
     }
-
+    
     .message-bubble {
-      max-width: 82%;           
-      padding: 16px 22px;       
+      max-width: 92%;               /* much wider bubbles */
+      padding: 16px 24px;
       border-radius: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      word-break: break-word;      /* ← NEW */
-      overflow-wrap: break-word;   /* ← NEW */
-      white-space: pre-wrap;       /* ← NEW */
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      word-break: break-word;
+      overflow-wrap: break-word;
+      white-space: pre-wrap;
     }
+    
     .bot-bubble {
       background: white;
       border: 1px solid #e2e8f0;
-      border-radius: 18px 18px 18px 4px;
+      border-radius: 20px 20px 20px 6px;
     }
-
+    
     .user-bubble {
       background: #0A0F1E;
       color: white;
-      border-radius: 18px 18px 4px 18px;
+      border-radius: 20px 20px 6px 20px;
       margin-left: auto;
     }
-
-    .sidebar {
-      transform: translateX(-100%);
-      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-    }
-
-    .sidebar.open {
-      transform: translateX(0);
-    }
-
-    .history-item {
-      transition: all 0.2s;
-    }
-
-    .history-item:hover {
-      background: #f1f5f9;
-    }
-
-    .focused {
-      background: #dbeafe;
-      border-left: 4px solid #3B82F6;
-    }
-
-    .typing {
-      display: flex;
-      gap: 6px;
-    }
-
-    .typing span {
-      height: 7px;
-      width: 7px;
-      background: #64748b;
-      border-radius: 50%;
-      animation: typingBounce 1.2s infinite;
-    }
-
+    
+    /* Rest of your existing styles (sidebar, typing, toast, etc.) */
+    .sidebar { transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); }
+    .sidebar.open { transform: translateX(0); }
+    .history-item { transition: all 0.2s; }
+    .history-item:hover { background: #f1f5f9; }
+    .focused { background: #dbeafe; border-left: 4px solid #3B82F6; }
+    .typing { display: flex; gap: 6px; }
+    .typing span { height: 7px; width: 7px; background: #64748b; border-radius: 50%; animation: typingBounce 1.2s infinite; }
     .typing span:nth-child(2) { animation-delay: 0.2s; }
     .typing span:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes typingBounce {
-      0%, 80%, 100% { transform: translateY(0); }
-      40% { transform: translateY(-6px); }
-    }
-
-    .toast {
-      animation: toastIn 0.3s ease forwards;
-    }
-
-    @keyframes toastIn {
-      from { transform: translate(-50%, 20px); opacity: 0; }
-      to { transform: translate(-50%, 0); opacity: 1; }
-    }
-  </style>
+    @keyframes typingBounce { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
+    .toast { animation: toastIn 0.3s ease forwards; }
+    @keyframes toastIn { from { transform: translate(-50%, 20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+</style>
 </head>
 <body class="min-h-screen">
 
@@ -387,10 +345,17 @@
       });
     }
     function rateMessage(index, rating) {
-      console.log(`✅ Rated message ${index} as ${rating}`);
-      // TODO: Later connect to your backend /chat/{id}/rate
-      alert(`Thank you! You rated this as ${rating === "yes" ? "👍 Helpful" : "👎 Not helpful"}`);
+  const buttons = document.querySelectorAll(`button[onclick^="rateMessage(${index}"]`);
+  
+  buttons.forEach(btn => {
+    if (btn.textContent === (rating === 'yes' ? '👍' : '👎')) {
+      btn.style.transform = 'scale(1.6)';
+      setTimeout(() => {
+        btn.style.transform = 'scale(1)';
+      }, 300);
     }
+  });
+}
     
     function showToast(message) {
       const toast = document.getElementById("toast");
