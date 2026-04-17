@@ -100,6 +100,47 @@
 </head>
 <body class="min-h-screen">
 
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="fixed inset-0 bg-slate-950 flex items-center justify-center z-50">
+  <div class="bg-white rounded-3xl p-10 w-full max-w-md shadow-2xl">
+    
+    <!-- Logo -->
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-10 h-10 bg-blue-500 rounded-2xl flex items-center justify-center text-2xl">◈</div>
+      <span class="text-2xl font-semibold">SalesAssist</span>
+    </div>
+
+    <h2 class="text-xl font-semibold mb-1">Welcome back</h2>
+    <p class="text-gray-400 text-sm mb-8">Sign in to your account</p>
+
+    <!-- Error Message -->
+    <div id="login-error" class="hidden bg-red-50 text-red-600 text-sm px-4 py-3 rounded-xl mb-6">
+      Invalid email or password.
+    </div>
+
+    <!-- Fields -->
+    <div class="space-y-4">
+      <div>
+        <label class="text-sm text-gray-600 mb-1 block">Email</label>
+        <input id="login-email" type="email" placeholder="you@company.com"
+          class="w-full border border-gray-200 rounded-2xl px-5 py-3 text-sm focus:outline-none focus:border-blue-500"/>
+      </div>
+      <div>
+        <label class="text-sm text-gray-600 mb-1 block">Password</label>
+        <input id="login-password" type="password" placeholder="••••••••"
+          class="w-full border border-gray-200 rounded-2xl px-5 py-3 text-sm focus:outline-none focus:border-blue-500"/>
+      </div>
+    </div>
+
+    <!-- Button -->
+    <button onclick="handleLogin()"
+      class="w-full mt-6 bg-slate-950 text-white py-3 rounded-2xl text-sm font-medium hover:bg-slate-800 transition">
+      Sign In
+    </button>
+
+  </div>
+</div>
+
     <!-- HEADER - Improved Wider Version -->
   <header class="bg-slate-950 text-white sticky top-0 z-50 shadow">
     <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
