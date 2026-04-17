@@ -235,6 +235,46 @@
   </div>
 
   <script>
+  async function handleLogin() {
+  const email    = document.getElementById("login-email").value.trim();
+  const password = document.getElementById("login-password").value.trim();
+
+  if (!email || !password) return;
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
+      method: "POST"
+    });
+
+    if (!res.ok) {
+      document.getElementById("login-error").classList.remove("hidden");
+      return;
+    }
+
+    const data = await res.json();
+
+    // Store in localStorage
+    localStorage.setItem("employee_id", data.employee_id);
+    localStorage.setItem("employee_name", data.name);
+    localStorage.setItem("role", data.role);
+
+    // Hide login screen
+    document.getElementById("login-screen").classList.add("hidden");
+
+    // Initialize chat
+    switchRole(data.role === "admin" ? "admin" : "rep");
+
+  } catch (err) {
+    document.getElementById("login-error").classList.remove("hidden");
+  }
+}
+
+// Also support Enter key
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("login-password").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleLogin();
+  });
+});
     // ==================== CONFIG ====================
     const BACKEND_URL = "https://sales-chatbot-7wsa.onrender.com";
     let currentRole = "rep"; // "rep" or "admin"
@@ -561,12 +601,16 @@
     
     // Initialize
     window.onload = () => {
-      loadData();
-      if (!currentChatId) newChat();
-      
-      // Default to Sales Rep
-      switchRole("rep");
-    };
+  const employeeId = localStorage.getItem("employee_id");
+  const role       = localStorage.getItem("role");
+
+  if (employeeId) {
+    // Already logged in, skip login screen
+    document.getElementById("login-screen").classList.add("hidden");
+    switchRole(role === "admin" ? "admin" : "rep");
+  }
+  // else login screen stays visible
+};
   </script>
 </body>
 </html>
