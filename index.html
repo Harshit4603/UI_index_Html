@@ -21,7 +21,7 @@
     .chat-container {
       max-width: 100%;
       margin: 0 auto;
-      padding: 24px 32px 140px;     /* Balanced padding */
+      padding: 24px 16px 140px;     /* Balanced padding */
       overflow-y: auto;
       scrollbar-width: none;
     }
@@ -323,7 +323,7 @@
         div.className = `flex ${msg.role === "user" ? "justify-end" : "justify-start"} ${focusedIndex === index ? "focused" : ""}`;
 
         div.innerHTML = `
-          <div class="max-w-[82%]">
+          <div class="max-w-[70%]">
             <div class="message-bubble ${msg.role === "user" ? "user-bubble" : "bot-bubble"}">
               ${msg.content}
             </div>
