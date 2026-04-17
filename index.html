@@ -242,10 +242,14 @@
   if (!email || !password) return;
 
   try {
-    const res = await fetch(`${BACKEND_URL}/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
-      method: "POST"
-    });
-
+    const res = await fetch(`${BACKEND_URL}/login`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    email: email,
+    password: password
+  })
+});
     if (!res.ok) {
       document.getElementById("login-error").classList.remove("hidden");
       return;
@@ -546,15 +550,16 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("chat-container").appendChild(typingDiv);
 
       try {
-        const res = await fetch(`${BACKEND_URL}/chat`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            employee_id: currentRole === "admin" ? "ADMIN001" : "EMP001",
-            query: query,
-            session_id: null // You can enhance this later
-          })
-        });
+const res = await fetch(`${BACKEND_URL}/chat`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    employee_id: localStorage.getItem("employee_id"),
+    role: localStorage.getItem("role"),
+    query: query,
+    session_id: null
+  })
+});
 
         const data = await res.json();
 
