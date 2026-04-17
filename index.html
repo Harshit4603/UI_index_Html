@@ -21,7 +21,7 @@
     .chat-container {
       max-width: 100%;
       margin: 0 auto;
-      padding: 24px 16px 140px;     /* Balanced padding */
+      padding: 24px 5px 140px;     /* Balanced padding */
       overflow-y: auto;
       scrollbar-width: none;
     }
@@ -47,6 +47,7 @@
       background: #ffffff;
       border: 1px solid #e5e7eb;
       border-radius: 20px 20px 20px 6px;
+      text-align: left;
     }
     
     .user-bubble {
@@ -320,10 +321,10 @@
 
       messages.forEach((msg, index) => {
         const div = document.createElement("div");
-        div.className = `flex ${msg.role === "user" ? "justify-end" : "justify-start"} ${focusedIndex === index ? "focused" : ""}`;
+        div.className = `flex ${msg.role === "user" ? "justify-end" : "justify-start"} px-6 ${focusedIndex === index ? "focused" : ""}`;
 
         div.innerHTML = `
-          <div class="max-w-[70%]">
+          <div class="max-w-[55%]">
             <div class="message-bubble ${msg.role === "user" ? "user-bubble" : "bot-bubble"}">
               ${msg.content}
             </div>
