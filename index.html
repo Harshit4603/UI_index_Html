@@ -161,7 +161,8 @@
 
     <!-- MAIN CHAT AREA -->
     <div class="flex-1 flex flex-col" style="margin-left: 0;">
-      <div id="chat-container" class="chat-container flex-1 overflow-y-auto space-y-8 pb-32"></div>
+      <div id="chat-container" class="chat-container flex-1 overflow-y-auto space-y-8 pb-32" 
+       style="max-width: 760px; margin: 0 auto; width: 100%;"></div>
 
       <!-- INPUT AREA -->
       <div class="sticky bottom-0 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent pt-8 pb-6">
@@ -321,10 +322,10 @@
 
       messages.forEach((msg, index) => {
         const div = document.createElement("div");
-        div.className = `flex ${msg.role === "user" ? "justify-end" : "justify-start"} px-6 ${focusedIndex === index ? "focused" : ""}`;
+        div.className = `flex ${msg.role === "user" ? "justify-end" : "justify-start"} ${focusedIndex === index ? "focused" : ""}`;
 
         div.innerHTML = `
-          <div class="max-w-[55%]">
+          <div class="${msg.role === 'user' ? 'max-w-[60%] ml-auto' : 'max-w-[60%] mr-auto'}">
             <div class="message-bubble ${msg.role === "user" ? "user-bubble" : "bot-bubble"}">
               ${msg.content}
             </div>
