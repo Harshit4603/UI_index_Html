@@ -467,17 +467,38 @@ document.addEventListener("DOMContentLoaded", () => {
         showToast("✓ Copied to clipboard");
       });
     }
-    function rateMessage(index, rating) {
-  const buttons = document.querySelectorAll(`button[onclick^="rateMessage(${index}"]`);
-  
-  buttons.forEach(btn => {
-    if (btn.textContent === (rating === 'yes' ? '👍' : '👎')) {
-      btn.style.transform = 'scale(1.6)';
-      setTimeout(() => {
-        btn.style.transform = 'scale(1)';
-      }, 300);
-    }
-  });
+    async function rateMessage(index, rating) {
+  const message = messages[index];
+
+  if (!message.message_id) {
+    console.error("No message_id found");
+    return;
+  }
+
+  try {
+    await fetch(`${BACKEND_URL}/chat/${message.message_id}/rate`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        rating: rating === "yes" ? "thumbs_up" : "thumbs_down"
+      })
+    });
+
+    // UI animation (keep your existing effect)
+    const buttons = document.querySelectorAll(`button[onclick^="rateMessage(${index}"]`);
+    
+    buttons.forEach(btn => {
+      if (btn.textContent === (rating === 'yes' ? '👍' : '👎')) {
+        btn.style.transform = 'scale(1.6)';
+        setTimeout(() => {
+          btn.style.transform = 'scale(1)';
+        }, 300);
+      }
+    });
+
+  } catch (err) {
+    console.error("Rating failed:", err);
+  }
 }
     
     function showToast(message) {
