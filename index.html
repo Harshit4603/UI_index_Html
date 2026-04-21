@@ -412,7 +412,9 @@ document.addEventListener("DOMContentLoaded", () => {
 function formatText(text) {
   return text
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" class="text-blue-600 underline">$1</a>')
+    .replace(/\*([\w].*?)\*/g, '• $1')
+    .replace(/_(.*?)_/g, '<em>$1</em>')
     .replace(/\n/g, '<br>');
 }
         // Render Messages
