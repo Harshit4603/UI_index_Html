@@ -409,7 +409,12 @@ document.addEventListener("DOMContentLoaded", () => {
         newChat();
       }
     }
-
+function formatText(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+}
         // Render Messages
     function renderMessages() {
       const container = document.getElementById("chat-container");
@@ -422,7 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
         div.innerHTML = `
           <div class="${msg.role === 'user' ? 'max-w-[45%] ml-auto' : 'max-w-[45%] mr-auto'}">
             <div class="message-bubble ${msg.role === "user" ? "user-bubble" : "bot-bubble"}">
-              ${msg.role === 'assistant' ? marked.parse(msg.content) : msg.content}
+              ${msg.role === 'assistant' ? formatText(msg.content) : msg.content}
             </div>
 
 ${msg.role === "assistant" ? `
