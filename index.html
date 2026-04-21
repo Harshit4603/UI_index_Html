@@ -208,22 +208,6 @@
 
         <div id="chat-history"></div>
         <!-- Admin Upload Section -->
-<div id="admin-upload" class="hidden mt-6 border-t pt-6">
-  <h3 class="text-sm font-semibold mb-3">Upload Document</h3>
-  
-  <label class="block w-full cursor-pointer bg-slate-50 border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:border-blue-400 transition">
-    <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400 mb-2 block"></i>
-    <span id="upload-filename" class="text-sm text-slate-500">Click to select file</span>
-    <input id="upload-input" type="file" accept=".pdf,.docx,.pptx" class="hidden" onchange="handleFileSelect(this)"/>
-  </label>
-
-  <button onclick="uploadDocument()" 
-    class="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl text-sm font-medium transition">
-    <i class="fa-solid fa-upload"></i> Ingest Document
-  </button>
-
-  <div id="upload-status" class="hidden mt-3 text-sm text-center py-2 rounded-xl"></div>
-</div>
       </div>
     </div>
 
@@ -235,15 +219,36 @@
       <!-- INPUT AREA -->
       <div class="sticky bottom-0 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent pt-8 pb-6">
         <div class="max-w-3xl mx-auto px-6">
-          <div class="relative">
-            <textarea id="user-input" rows="1"
-              class="w-full resize-none rounded-3xl border border-gray-300 focus:border-blue-500 focus:ring-0 px-7 py-5 pr-16 text-base shadow-sm"
-              placeholder="Ask me anything about sales..."></textarea>
-            
-            <button onclick="sendMessage()" 
-              class="absolute right-4 bottom-4 bg-blue-600 hover:bg-blue-700 text-white w-10 h-10 rounded-2xl flex items-center justify-center transition">
-              <i class="fa-solid fa-paper-plane"></i>
+          <div class="relative flex items-end gap-2">
+            <!-- Hidden file input -->
+            <input id="chat-upload-input" type="file" accept=".pdf,.docx,.pptx" class="hidden" onchange="handleChatFileSelect(this)"/>
+            <!-- + Upload button (admin only) -->
+            <button id="chat-upload-btn" onclick="document.getElementById('chat-upload-input').click()"
+              class="hidden flex-shrink-0 bg-white border border-gray-300 hover:border-blue-500 text-gray-500 hover:text-blue-600 w-12 h-12 rounded-2xl flex items-center justify-center transition shadow-sm mb-1"
+              title="Upload document">
+              <i class="fa-solid fa-plus text-lg"></i>
             </button>
+
+            <div class="relative flex-1">
+              <textarea id="user-input" rows="1"
+                class="w-full resize-none rounded-3xl border border-gray-300 focus:border-blue-500 focus:ring-0 px-7 py-5 pr-16 text-base shadow-sm"
+                placeholder="Ask me anything about sales..."></textarea>
+              
+              <button onclick="sendMessage()" 
+                class="absolute right-4 bottom-4 bg-blue-600 hover:bg-blue-700 text-white w-10 h-10 rounded-2xl flex items-center justify-center transition">
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Upload status chip -->
+          <div id="chat-upload-status" class="hidden mt-2 ml-14 text-xs px-4 py-2 rounded-xl bg-blue-50 text-blue-600 flex items-center gap-2">
+            <i class="fa-solid fa-file"></i>
+            <span id="chat-upload-label">No file selected</span>
+            <button onclick="submitChatUpload()" class="ml-auto bg-blue-600 text-white px-3 py-1 rounded-xl hover:bg-blue-700 transition text-xs font-medium">
+              Ingest
+            </button>
+            <button onclick="dismissChatUpload()" class="text-gray-400 hover:text-gray-600 ml-1">✕</button>
           </div>
           <p class="text-center text-xs text-gray-400 mt-3">SalesAssist • Powered by AI</p>
         </div>
@@ -331,8 +336,8 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("btn-admin").classList.toggle("text-black", role === "admin");
       
       document.getElementById("admin-actions").classList.toggle("hidden", role !== "admin");
-      // Add inside switchRole() function
-      document.getElementById("admin-upload").classList.toggle("hidden", role !== "admin");
+      document.getElementById("chat-upload-btn").classList.toggle("hidden", role !== "admin");
+      if (role !== "admin") dismissChatUpload();
       
       loadData();
       newChat();
@@ -574,6 +579,42 @@ function handleFileSelect(input) {
   if (file) {
     document.getElementById("upload-filename").textContent = file.name;
   }
+}
+
+// Chat bar upload handlers
+function handleChatFileSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  document.getElementById("chat-upload-label").textContent = file.name;
+  document.getElementById("chat-upload-status").classList.remove("hidden");
+}
+
+function dismissChatUpload() {
+  document.getElementById("chat-upload-input").value = "";
+  document.getElementById("chat-upload-label").textContent = "No file selected";
+  document.getElementById("chat-upload-status").classList.add("hidden");
+}
+
+async function submitChatUpload() {
+  const input = document.getElementById("chat-upload-input");
+  const label = document.getElementById("chat-upload-label");
+  const file  = input.files[0];
+  if (!file) return;
+  label.textContent = "⏳ Uploading...";
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res  = await fetch(`${BACKEND_URL}/admin/ingest`, { method: "POST", body: formData });
+    const data = await res.json();
+    if (res.ok) {
+      showToast(`✅ ${data.chunks} chunks ingested (${data.category})`);
+    } else {
+      showToast(`❌ ${data.detail || "Ingestion failed"}`);
+    }
+  } catch {
+    showToast("❌ Connection error");
+  }
+  dismissChatUpload();
 }
 
 async function uploadDocument() {
