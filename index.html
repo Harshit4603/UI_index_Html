@@ -837,39 +837,28 @@ window.onload = () => {
     document.getElementById("login-screen").classList.add("hidden");
     switchRole(role === "admin" ? "admin" : "rep");
 
-    // Restore last active chat
     const lastChatId = localStorage.getItem(`lastChatId_${role}`);
     if (lastChatId && chatHistory[lastChatId]) {
       loadChat(lastChatId);
     }
 
-    // Force sidebar closed on load
     document.getElementById("sidebar").classList.remove("open");
-  }// ==================== TTS INIT ====================
-let ttsEnabled = true;
-window.speakText = function(text) {
-  if (!ttsEnabled) return;
-  const cleanText = text.replace(/[*#_`]/g, '');
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance();
-  utterance.text = cleanText;
-  utterance.lang = 'en-US';
-  utterance.rate = 1.1;
-  window.speechSynthesis.speak(utterance);
-};
-
-    window.speakText = function(text) {
-      if (!ttsEnabled) return;
-      const cleanText = text.replace(/[*#_`]/g, '');
-      window.speechSynthesis.cancel();
-      utterance.text = cleanText;
-      utterance.lang = 'en-US';
-      utterance.rate = 1.1;
-      window.speechSynthesis.speak(utterance);
-    };
   }
+
+  // ==================== TTS INIT ====================
+  let ttsEnabled = true;
+  window.speakText = function(text) {
+    if (!ttsEnabled) return;
+    const cleanText = text.replace(/[*#_`]/g, '');
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance();
+    utterance.text = cleanText;
+    utterance.lang = 'en-US';
+    utterance.rate = 1.1;
+    window.speechSynthesis.speak(utterance);
+  };
 };
-    function useFollowup(text) {
+  function useFollowup(text) {
   const input = document.getElementById("user-input");
   input.value = text;
   sendMessage();
