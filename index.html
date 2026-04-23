@@ -247,6 +247,13 @@
               <i class="fa-solid fa-plus text-lg"></i>
             </button>
 
+<!-- STT Button -->
+<button id="stt-btn"
+  class="flex-shrink-0 bg-white border border-gray-300 hover:border-blue-500 text-gray-500 w-12 h-12 rounded-2xl flex items-center justify-center transition shadow-sm mb-1"
+  title="Voice Input">
+  <i class="fa-solid fa-microphone text-lg"></i>
+</button>
+
 <!-- TTS Toggle Button -->
 <button id="tts-btn"
   class="flex-shrink-0 bg-white border border-gray-300 hover:border-blue-500 text-gray-500 w-12 h-12 rounded-2xl flex items-center justify-center transition shadow-sm mb-1"
@@ -507,14 +514,7 @@ function toggleReadMore(btn) {
         div.innerHTML = `
           <div class="${msg.role === 'user' ? 'max-w-[45%] ml-auto' : 'max-w-[45%] mr-auto'}">
             <div class="message-bubble ${msg.role === "user" ? "user-bubble" : "bot-bubble"}">
-            ${msg.role === 'assistant' ? `
-  <div>${renderAnswer(msg.content)}</div>
-  
-  <!-- STT Button inside bot message -->
-  <button class="stt-inline-btn mt-3 text-xs text-gray-500 hover:text-blue-600 flex items-center gap-2">
-    <i class="fa-solid fa-microphone"></i> Reply with voice
-  </button>
-` : msg.content}
+            ${msg.role === 'assistant' ? renderAnswer(msg.content) : msg.content}
             </div>
 
 ${msg.role === "assistant" ? `
@@ -564,10 +564,6 @@ ${msg.followups && msg.followups.length ? `
         `;
 
         container.appendChild(div);
-        // Attach STT click
-div.querySelectorAll('.stt-inline-btn').forEach(btn => {
-  btn.onclick = () => startInlineSTT(btn);
-});
       });
 
       // Scroll to bottom
@@ -843,6 +839,30 @@ window.onload = () => {
 
     // Force sidebar closed on load
     document.getElementById("sidebar").classList.remove("open");
+  }// ==================== FIXED TTS INIT ====================
+  const ttsBtn = document.getElementById('tts-btn');
+
+  if (ttsBtn) {
+    let ttsEnabled = true;
+    let utterance = new SpeechSynthesisUtterance();
+
+    ttsBtn.classList.add('tts-active');
+
+    ttsBtn.addEventListener('click', () => {
+      ttsEnabled = !ttsEnabled;
+      ttsBtn.classList.toggle('tts-active', ttsEnabled);
+      if (!ttsEnabled) window.speechSynthesis.cancel();
+    });
+
+    window.speakText = function(text) {
+      if (!ttsEnabled) return;
+      const cleanText = text.replace(/[*#_`]/g, '');
+      window.speechSynthesis.cancel();
+      utterance.text = cleanText;
+      utterance.lang = 'en-US';
+      utterance.rate = 1.1;
+      window.speechSynthesis.speak(utterance);
+    };
   }
 };
     function useFollowup(text) {
@@ -850,17 +870,53 @@ window.onload = () => {
   input.value = text;
   sendMessage();
 }
+    // ==================== STT ====================
+const sttBtn = document.getElementById('stt-btn');
+let recognition;
 
-// ==================== TTS ====================
-const ttsBtn = document.getElementById('tts-btn');
-let ttsEnabled = false;
-let utterance = new SpeechSynthesisUtterance();
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
 
-ttsBtn.addEventListener('click', () => {
-  ttsEnabled = !ttsEnabled;
-  ttsBtn.classList.toggle('tts-active', ttsEnabled);
-  if (!ttsEnabled) window.speechSynthesis.cancel();
-});
+  recognition.onstart = () => {
+    sttBtn.classList.add('stt-listening');
+    document.getElementById('user-input').placeholder = "Listening...";
+  };
+
+  recognition.onresult = (event) => {
+    let finalTranscript = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      if (event.results[i].isFinal) {
+        finalTranscript += event.results[i][0].transcript;
+      } else {
+        document.getElementById('user-input').value = event.results[i][0].transcript;
+      }
+    }
+    if (finalTranscript) document.getElementById('user-input').value = finalTranscript;
+  };
+
+  recognition.onend = () => {
+    sttBtn.classList.remove('stt-listening');
+    document.getElementById('user-input').placeholder = "Ask me anything about sales...";
+    if (document.getElementById('user-input').value.trim()) sendMessage();
+  };
+
+  recognition.onerror = (event) => {
+    console.error('STT error:', event.error);
+    sttBtn.classList.remove('stt-listening');
+    document.getElementById('user-input').placeholder = "Ask me anything about sales...";
+  };
+
+  sttBtn.addEventListener('click', () => {
+    sttBtn.classList.contains('stt-listening') ? recognition.stop() : recognition.start();
+  });
+
+} else {
+  if (sttBtn) sttBtn.style.display = 'none';
+}
 
 function speakText(text) {
   if (!ttsEnabled) return;
@@ -870,59 +926,6 @@ function speakText(text) {
   utterance.lang = 'en-US';
   utterance.rate = 1.1;
   window.speechSynthesis.speak(utterance);
-}
-    // ==================== INLINE STT ====================
-let recognition;
-
-function startInlineSTT(button) {
-  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-    alert("Speech recognition not supported");
-    return;
-  }
-
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  if (!recognition) {
-    recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-  }
-
-  const input = document.getElementById('user-input');
-
-  recognition.onstart = () => {
-    button.classList.add('stt-listening');
-    button.innerHTML = `<i class="fa-solid fa-microphone"></i> Listening...`;
-    input.placeholder = "Listening...";
-  };
-
-  recognition.onresult = (event) => {
-    let finalTranscript = '';
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      if (event.results[i].isFinal) {
-        finalTranscript += event.results[i][0].transcript;
-      } else {
-        input.value = event.results[i][0].transcript;
-      }
-    }
-    if (finalTranscript) input.value = finalTranscript;
-  };
-
-  recognition.onend = () => {
-    button.classList.remove('stt-listening');
-    button.innerHTML = `<i class="fa-solid fa-microphone"></i> Reply with voice`;
-    input.placeholder = "Ask me anything about sales...";
-
-    if (input.value.trim()) sendMessage();
-  };
-
-  recognition.onerror = () => {
-    button.classList.remove('stt-listening');
-    button.innerHTML = `<i class="fa-solid fa-microphone"></i> Reply with voice`;
-  };
-
-  recognition.start();
 }
   </script>
 </body>
