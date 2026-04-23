@@ -716,6 +716,7 @@ async function uploadDocument() {
 
       renderMessages();
       saveData();
+      localStorage.setItem(`lastChatId_${currentRole}`, currentChatId);
 
       // Clear input
       input.value = "";
@@ -794,11 +795,15 @@ const res = await fetch(`${BACKEND_URL}/chat`, {
   const role       = localStorage.getItem("role");
 
   if (employeeId) {
-    // Already logged in, skip login screen
     document.getElementById("login-screen").classList.add("hidden");
     switchRole(role === "admin" ? "admin" : "rep");
+
+    // Restore last active chat instead of creating new one
+    const lastChatId = localStorage.getItem(`lastChatId_${role}`);
+    if (lastChatId && chatHistory[lastChatId]) {
+      loadChat(lastChatId);
+    }
   }
-  // else login screen stays visible
 };
     function useFollowup(text) {
   const input = document.getElementById("user-input");
