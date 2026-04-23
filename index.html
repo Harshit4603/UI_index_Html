@@ -253,13 +253,6 @@
   title="Voice Input">
   <i class="fa-solid fa-microphone text-lg"></i>
 </button>
-
-<!-- TTS Toggle Button -->
-<button id="tts-btn"
-  class="flex-shrink-0 bg-white border border-gray-300 hover:border-blue-500 text-gray-500 w-12 h-12 rounded-2xl flex items-center justify-center transition shadow-sm mb-1"
-  title="Toggle Voice Output">
-  <i class="fa-solid fa-volume-high text-lg"></i>
-</button>
             
             <div class="relative flex-1">
               <textarea id="user-input" rows="1"
@@ -852,20 +845,18 @@ window.onload = () => {
 
     // Force sidebar closed on load
     document.getElementById("sidebar").classList.remove("open");
-  }// ==================== FIXED TTS INIT ====================
-  const ttsBtn = document.getElementById('tts-btn');
-
-  if (ttsBtn) {
-    let ttsEnabled = true;
-    let utterance = new SpeechSynthesisUtterance();
-
-    ttsBtn.classList.add('tts-active');
-
-    ttsBtn.addEventListener('click', () => {
-      ttsEnabled = !ttsEnabled;
-      ttsBtn.classList.toggle('tts-active', ttsEnabled);
-      if (!ttsEnabled) window.speechSynthesis.cancel();
-    });
+  }// ==================== TTS INIT ====================
+let ttsEnabled = true;
+window.speakText = function(text) {
+  if (!ttsEnabled) return;
+  const cleanText = text.replace(/[*#_`]/g, '');
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance();
+  utterance.text = cleanText;
+  utterance.lang = 'en-US';
+  utterance.rate = 1.1;
+  window.speechSynthesis.speak(utterance);
+};
 
     window.speakText = function(text) {
       if (!ttsEnabled) return;
@@ -929,16 +920,6 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
 
 } else {
   if (sttBtn) sttBtn.style.display = 'none';
-}
-
-function speakText(text) {
-  if (!ttsEnabled) return;
-  const cleanText = text.replace(/[*#_`]/g, '');
-  window.speechSynthesis.cancel();
-  utterance.text = cleanText;
-  utterance.lang = 'en-US';
-  utterance.rate = 1.1;
-  window.speechSynthesis.speak(utterance);
 }
   </script>
 </body>
