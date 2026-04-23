@@ -790,7 +790,7 @@ const res = await fetch(`${BACKEND_URL}/chat`, {
     });
     
     // Initialize
-    window.onload = () => {
+window.onload = () => {
   const employeeId = localStorage.getItem("employee_id");
   const role       = localStorage.getItem("role");
 
@@ -798,11 +798,14 @@ const res = await fetch(`${BACKEND_URL}/chat`, {
     document.getElementById("login-screen").classList.add("hidden");
     switchRole(role === "admin" ? "admin" : "rep");
 
-    // Restore last active chat instead of creating new one
+    // Restore last active chat
     const lastChatId = localStorage.getItem(`lastChatId_${role}`);
     if (lastChatId && chatHistory[lastChatId]) {
       loadChat(lastChatId);
     }
+
+    // Force sidebar closed on load
+    document.getElementById("sidebar").classList.remove("open");
   }
 };
     function useFollowup(text) {
