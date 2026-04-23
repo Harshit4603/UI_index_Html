@@ -514,7 +514,16 @@ function toggleReadMore(btn) {
         div.innerHTML = `
           <div class="${msg.role === 'user' ? 'max-w-[45%] ml-auto' : 'max-w-[45%] mr-auto'}">
             <div class="message-bubble ${msg.role === "user" ? "user-bubble" : "bot-bubble"}">
-            ${msg.role === 'assistant' ? renderAnswer(msg.content) : msg.content}
+            ${msg.role === 'assistant' ? `
+  <div>${renderAnswer(msg.content)}</div>
+
+  <div class="flex mt-3">
+    <!-- TTS Button -->
+    <button class="tts-inline-btn text-xs text-gray-500 hover:text-green-600 flex items-center gap-2">
+      <i class="fa-solid fa-volume-high"></i> Listen
+    </button>
+  </div>
+` : msg.content}
             </div>
 
 ${msg.role === "assistant" ? `
@@ -564,6 +573,10 @@ ${msg.followups && msg.followups.length ? `
         `;
 
         container.appendChild(div);
+        // Attach TTS click
+div.querySelectorAll('.tts-inline-btn').forEach(btn => {
+  btn.onclick = () => speakText(msg.content);
+});
       });
 
       // Scroll to bottom
