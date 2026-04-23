@@ -510,12 +510,14 @@ function toggleReadMore(btn) {
             ${msg.role === 'assistant' ? `
   <div>${renderAnswer(msg.content)}</div>
 
-  <div class="flex mt-3">
-    <!-- TTS Button -->
-    <button class="tts-inline-btn text-xs text-gray-500 hover:text-green-600 flex items-center gap-2">
-      <i class="fa-solid fa-volume-high"></i> Listen
-    </button>
-  </div>
+  <div class="flex mt-3 gap-3">
+  <button class="tts-inline-btn text-xs text-gray-500 hover:text-green-600 flex items-center gap-2">
+    <i class="fa-solid fa-volume-high"></i> Listen
+  </button>
+  <button class="tts-stop-btn hidden text-xs text-red-500 hover:text-red-700 flex items-center gap-2">
+    <i class="fa-solid fa-stop"></i> Stop
+  </button>
+</div>
 ` : msg.content}
             </div>
 
@@ -568,7 +570,19 @@ ${msg.followups && msg.followups.length ? `
         container.appendChild(div);
         // Attach TTS click
 div.querySelectorAll('.tts-inline-btn').forEach(btn => {
-  btn.onclick = () => speakText(msg.content);
+  const stopBtn = btn.parentElement.querySelector('.tts-stop-btn');
+
+  btn.onclick = () => {
+    speakText(msg.content, btn, stopBtn);
+    btn.classList.add('hidden');
+    stopBtn.classList.remove('hidden');
+  };
+
+  stopBtn.onclick = () => {
+    window.speechSynthesis.cancel();
+    stopBtn.classList.add('hidden');
+    btn.classList.remove('hidden');
+  };
 });
       });
 
@@ -800,7 +814,7 @@ const res = await fetch(`${BACKEND_URL}/chat`, {
   followups: data.followups || [],          // ADD THIS
   message_id: data.message_id || null
 });
-        speakText(data.answer || "");
+        
         if (chatHistory[currentChatId]) {
           chatHistory[currentChatId].messages = messages;
         }
@@ -847,16 +861,19 @@ window.onload = () => {
 
   // ==================== TTS INIT ====================
   let ttsEnabled = true;
-  window.speakText = function(text) {
-    if (!ttsEnabled) return;
-    const cleanText = text.replace(/[*#_`]/g, '');
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance();
-    utterance.text = cleanText;
-    utterance.lang = 'en-US';
-    utterance.rate = 1.1;
-    window.speechSynthesis.speak(utterance);
+ window.speakText = function(text, listenBtn, stopBtn) {
+  const cleanText = text.replace(/[*#_`]/g, '');
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance();
+  utterance.text = cleanText;
+  utterance.lang = 'en-US';
+  utterance.rate = 1.1;
+  utterance.onend = () => {
+    if (stopBtn) stopBtn.classList.add('hidden');
+    if (listenBtn) listenBtn.classList.remove('hidden');
   };
+  window.speechSynthesis.speak(utterance);
+};
 };
   function useFollowup(text) {
   const input = document.getElementById("user-input");
