@@ -636,7 +636,7 @@ function renderChatHistory() {
   const container = document.getElementById("chat-history");
   container.innerHTML = "";
   const groups = { Today:[], Yesterday:[], Earlier:[] };
-  Object.keys(chatHistory).forEach(id => {
+  Object.keys(chatHistory).sort((a, b) => chatHistory[b].timestamp - chatHistory[a].timestamp).forEach(id => {
     const chat = chatHistory[id];
     const diff = Math.floor((Date.now() - new Date(chat.timestamp)) / 86400000);
     groups[diff === 0 ? "Today" : diff === 1 ? "Yesterday" : "Earlier"].push({ id, ...chat });
