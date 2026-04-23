@@ -3,86 +3,127 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SalesAssist</title>
+  <title>SalesAssist – The Sleep Company</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>  <!-- ADD HERE -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600&display=swap');
-    
+    :root {
+      --navy:      #0D1B2A;
+      --navy-mid:  #162435;
+      --navy-soft: #1E3048;
+      --teal:      #1A6B72;
+      --teal-light:#2A8C95;
+      --gold:      #C9973A;
+      --gold-light:#E5B55A;
+      --cream:     #F5EFE6;
+      --cream-dark:#EDE4D8;
+      --white:     #FFFFFF;
+      --text-muted:#8A9BB0;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
-      font-family: 'Inter', system_ui, sans-serif;
-      background: linear-gradient(135deg, #F0F2F8 0%, #E2E8F0 100%);
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
       overflow-x: hidden;
-    }
-    
-    .serif { font-family: 'Playfair Display', Georgia, serif; }
-
-    /* Main Chat Area - Clean & Full Width */
-    .chat-container {
-      max-width: 100%;
-      margin: 0 auto;
-      padding: 24px 5px 140px;     /* Balanced padding */
-      overflow-y: auto;
-      scrollbar-width: none;
-    }
-    
-    .chat-container::-webkit-scrollbar {
-      display: none;
+      margin: 0;
     }
 
-    /* Sleek & Elegant Message Bubbles */
-    .message-bubble {
-      max-width: 78%;                    /* Not too wide, looks elegant */
-      padding: 4px 8px;
-      border-radius: 20px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-      word-break: break-word;
-      overflow-wrap: break-word;
-      white-space: pre-wrap;
-      line-height: 1.55;
-      font-size: 0.9rem;
-    }
-    /* Add this AFTER .message-bubble in your CSS */
-.bot-bubble {
-  white-space: normal;
-}
+    .serif { font-family: 'DM Serif Display', Georgia, serif; }
 
-    @media (max-width: 640px) {
-  .message-bubble {
-    max-width: 75%;
-  }
-  }
-    .bot-bubble {
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 20px 20px 20px 6px;
-      text-align: left;
-    }
-    
-    .user-bubble {
-      background: #0A0F1E;
-      color: white;
-      border-radius: 20px 20px 6px 20px;
-      margin-left: auto;
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--cream-dark); border-radius: 99px; }
+
+    /* ── Header ── */
+    header {
+      background: var(--navy);
+      border-bottom: 1px solid rgba(201,151,58,0.25);
     }
 
-    /* Sidebar */
+    /* ── Nav tabs ── */
+    .nav-tab {
+      padding: 8px 20px;
+      border-radius: 99px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .nav-tab.active {
+      background: var(--gold);
+      color: var(--navy);
+    }
+    .nav-tab:not(.active):hover { color: #fff; }
+
+    /* ── Role toggle ── */
+    .role-pill {
+      padding: 7px 18px;
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .role-pill.active { background: var(--white); color: var(--navy); }
+
+    /* ── Sidebar ── */
     .sidebar {
       transform: translateX(-100%);
-      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+      transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
+      background: var(--navy-mid);
+      border-right: 1px solid rgba(201,151,58,0.15);
     }
     .sidebar.open { transform: translateX(0); }
 
-    /* Typing Indicator */
-    .typing {
-      display: flex;
-      gap: 6px;
+    /* ── Chat area ── */
+    .chat-container {
+      padding: 28px 8px 150px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--cream-dark) transparent;
     }
+
+    /* ── Bubbles ── */
+    .message-bubble {
+      max-width: 72%;
+      padding: 14px 18px;
+      border-radius: 20px;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      line-height: 1.6;
+      font-size: 0.88rem;
+    }
+
+    .bot-bubble {
+      background: var(--white);
+      border: 1px solid var(--cream-dark);
+      border-radius: 4px 20px 20px 20px;
+      color: var(--navy);
+      box-shadow: 0 2px 12px rgba(13,27,42,0.06);
+      white-space: normal;
+    }
+
+    .user-bubble {
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 20px 20px 4px 20px;
+      margin-left: auto;
+      box-shadow: 0 2px 12px rgba(13,27,42,0.18);
+    }
+
+    /* ── Typing dots ── */
+    .typing { display: flex; gap: 5px; align-items: center; }
     .typing span {
-      height: 7px;
-      width: 7px;
-      background: #94a3b8;
+      width: 7px; height: 7px;
+      background: var(--teal-light);
       border-radius: 50%;
       animation: typingBounce 1.2s infinite;
     }
@@ -90,378 +131,568 @@
     .typing span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes typingBounce {
       0%, 80%, 100% { transform: translateY(0); }
-      40% { transform: translateY(-6px); }
+      40%  { transform: translateY(-6px); }
     }
 
-    /* Toast */
-    .toast {
-      animation: toastIn 0.3s ease forwards;
+    /* ── Input area ── */
+    .input-shell {
+      background: linear-gradient(to top, var(--cream) 70%, transparent);
+      backdrop-filter: blur(6px);
     }
+
+    textarea#user-input {
+      background: var(--white);
+      border: 1.5px solid var(--cream-dark);
+      color: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+    }
+    textarea#user-input:focus { outline: none; border-color: var(--teal-light); }
+    textarea#user-input::placeholder { color: #aab; }
+
+    .send-btn {
+      background: var(--teal);
+      transition: background 0.2s;
+    }
+    .send-btn:hover { background: var(--teal-light); }
+
+    /* ── Icon buttons (mic, upload) ── */
+    .icon-btn {
+      background: var(--white);
+      border: 1.5px solid var(--cream-dark);
+      color: #7a8fa8;
+      transition: all 0.2s;
+    }
+    .icon-btn:hover { border-color: var(--teal-light); color: var(--teal); }
+
+    /* ── STT listening ── */
+    .stt-listening {
+      background: #ef4444 !important;
+      color: white !important;
+      border-color: #ef4444 !important;
+      animation: pulseRed 1.5s infinite;
+    }
+    @keyframes pulseRed {
+      0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+      70%  { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
+      100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+    }
+
+    /* ── Toast ── */
+    .toast { animation: toastIn 0.3s ease forwards; }
     @keyframes toastIn {
-      from { transform: translate(-50%, 20px); opacity: 0; }
-      to { transform: translate(-50%, 0); opacity: 1; }
+      from { transform: translate(-50%, 16px); opacity: 0; }
+      to   { transform: translate(-50%, 0);    opacity: 1; }
     }
-    /* STT Button - Listening State */
-.stt-listening {
-  background: #ef4444 !important;
-  color: white !important;
-  animation: pulse-red 1.5s infinite;
-}
 
-@keyframes pulse-red {
-  0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-  70%  { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-}
+    /* ── Resource Library ── */
+    #resources-panel { display: none; }
+    #resources-panel.active { display: flex; }
 
-/* TTS Button - Active State */
-.tts-active {
-  color: #06b6d4 !important;
-  background: #ecfeff !important;
-}
-</style>
+    .resource-card {
+      background: var(--white);
+      border: 1px solid var(--cream-dark);
+      border-radius: 16px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .resource-card:hover {
+      border-color: var(--gold);
+      box-shadow: 0 4px 20px rgba(13,27,42,0.08);
+      transform: translateY(-2px);
+    }
+
+    .resource-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 99px;
+    }
+    .tag-brochure  { background: #EEF7F8; color: var(--teal); }
+    .tag-price     { background: #FFF8EC; color: var(--gold); }
+    .tag-datasheet { background: #EEF0FF; color: #5B67E0; }
+    .tag-guide     { background: #F0FFF4; color: #2E8B57; }
+
+    /* ── Followup chips ── */
+    .followup-chip {
+      background: var(--cream);
+      border: 1px solid var(--cream-dark);
+      color: var(--teal);
+      font-size: 0.75rem;
+      padding: 6px 14px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .followup-chip:hover { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+    /* ── Sources ── */
+    details summary { list-style: none; }
+    details summary::-webkit-details-marker { display: none; }
+
+    /* ── Listen / Stop TTS ── */
+    .tts-listen-btn {
+      font-size: 0.72rem; color: var(--teal-light);
+      display: flex; align-items: center; gap: 5px;
+      background: none; border: none; cursor: pointer;
+      padding: 0;
+      transition: color 0.15s;
+    }
+    .tts-listen-btn:hover { color: var(--teal); }
+    .tts-stop-btn {
+      font-size: 0.72rem; color: #e05252;
+      display: none; align-items: center; gap: 5px;
+      background: none; border: none; cursor: pointer;
+      padding: 0;
+      transition: color 0.15s;
+    }
+    .tts-stop-btn:hover { color: #b52a2a; }
+
+    /* ── Login overlay ── */
+    #login-screen { background: var(--navy); }
+
+    .login-card {
+      background: var(--white);
+      border-radius: 28px;
+      box-shadow: 0 32px 80px rgba(13,27,42,0.35);
+    }
+
+    .login-input {
+      border: 1.5px solid var(--cream-dark);
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-size: 0.88rem;
+      font-family: 'DM Sans', sans-serif;
+      width: 100%;
+      color: var(--navy);
+      transition: border-color 0.2s;
+    }
+    .login-input:focus { outline: none; border-color: var(--teal-light); }
+
+    .login-btn {
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 13px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      width: 100%;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .login-btn:hover { background: var(--navy-soft); }
+
+    /* ── History items ── */
+    .history-item { border-radius: 12px; transition: background 0.15s; }
+    .history-item:hover { background: rgba(255,255,255,0.06); }
+    .history-item.active-chat { background: rgba(201,151,58,0.12); }
+
+    /* ── Gold divider ── */
+    .gold-line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.3;
+    }
+
+    @media (max-width: 640px) {
+      .message-bubble { max-width: 86%; }
+      .hide-mobile { display: none !important; }
+    }
+  </style>
 </head>
 <body class="min-h-screen">
 
-<!-- LOGIN SCREEN -->
-<div id="login-screen" class="fixed inset-0 bg-slate-950 flex items-center justify-center z-50">
-  <div class="bg-white rounded-3xl p-10 w-full max-w-md shadow-2xl">
-    
-    <!-- Logo -->
+<!-- ═══════════════════════════════ LOGIN ═══════════════════════════════ -->
+<div id="login-screen" class="fixed inset-0 flex items-center justify-center z-50 p-4">
+
+  <!-- Decorative grid bg -->
+  <div class="absolute inset-0 opacity-5" style="background-image: repeating-linear-gradient(0deg,#fff 0,#fff 1px,transparent 1px,transparent 40px),repeating-linear-gradient(90deg,#fff 0,#fff 1px,transparent 1px,transparent 40px);"></div>
+
+  <div class="login-card w-full max-w-md p-10 relative z-10">
+    <!-- Brand mark -->
     <div class="flex items-center gap-3 mb-8">
-      <div class="w-10 h-10 bg-blue-500 rounded-2xl flex items-center justify-center text-2xl">◈</div>
-      <span class="text-2xl font-semibold">SalesAssist</span>
+      <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-xl" style="background:var(--navy);">
+        <span style="color:var(--gold);">◈</span>
+      </div>
+      <div>
+        <div class="serif text-xl" style="color:var(--navy); line-height:1.1;">SalesAssist</div>
+        <div class="text-xs" style="color:var(--teal); letter-spacing:0.04em;">The Sleep Company</div>
+      </div>
     </div>
 
-    <h2 class="text-xl font-semibold mb-1">Welcome back</h2>
-    <p class="text-gray-400 text-sm mb-8">Sign in to your account</p>
+    <div class="gold-line mb-7"></div>
 
-    <!-- Error Message -->
-    <div id="login-error" class="hidden bg-red-50 text-red-600 text-sm px-4 py-3 rounded-xl mb-6">
+    <h2 class="text-xl font-semibold mb-1" style="color:var(--navy);">Welcome back</h2>
+    <p class="text-sm mb-7" style="color:var(--text-muted);">Sign in to continue</p>
+
+    <div id="login-error" class="hidden text-sm px-4 py-3 rounded-xl mb-5" style="background:#FEF2F2; color:#DC2626;">
       Invalid email or password.
     </div>
 
-    <!-- Fields -->
     <div class="space-y-4">
       <div>
-        <label class="text-sm text-gray-600 mb-1 block">Email</label>
-        <input id="login-email" type="email" placeholder="you@company.com"
-          class="w-full border border-gray-200 rounded-2xl px-5 py-3 text-sm focus:outline-none focus:border-blue-500"/>
+        <label class="text-xs font-600 mb-1 block" style="color:var(--text-muted); letter-spacing:0.05em; text-transform:uppercase;">Email</label>
+        <input id="login-email" type="email" placeholder="you@thesleepcompany.in" class="login-input"/>
       </div>
       <div>
-        <label class="text-sm text-gray-600 mb-1 block">Password</label>
-        <input id="login-password" type="password" placeholder="••••••••"
-          class="w-full border border-gray-200 rounded-2xl px-5 py-3 text-sm focus:outline-none focus:border-blue-500"/>
+        <label class="text-xs font-600 mb-1 block" style="color:var(--text-muted); letter-spacing:0.05em; text-transform:uppercase;">Password</label>
+        <input id="login-password" type="password" placeholder="••••••••" class="login-input"/>
       </div>
     </div>
 
-    <!-- Button -->
-    <button onclick="handleLogin()"
-      class="w-full mt-6 bg-slate-950 text-white py-3 rounded-2xl text-sm font-medium hover:bg-slate-800 transition">
-      Sign In
-    </button>
-
+    <button onclick="handleLogin()" class="login-btn mt-6">Sign In →</button>
+    <p class="text-center text-xs mt-5" style="color:var(--text-muted);">The Sleep Company · Internal Sales Tool</p>
   </div>
 </div>
 
-    <!-- HEADER - Improved Wider Version -->
-  <header class="bg-slate-950 text-white sticky top-0 z-50 shadow">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <button onclick="toggleSidebar()" class="text-2xl p-2 hover:bg-white/10 rounded-xl">☰</button>
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-blue-500 rounded-2xl flex items-center justify-center text-3xl">◈</div>
-          <div>
-            <div class="serif text-3xl font-semibold tracking-tight">SalesAssist</div>
-            <div class="text-xs text-emerald-400 flex items-center gap-2">
-              <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></span>
-              Online • Ready to help
-            </div>
+<!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
+<header class="sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-5 py-3 flex items-center justify-between gap-4">
+
+    <!-- Left: Hamburger + Brand -->
+    <div class="flex items-center gap-4">
+      <button onclick="toggleSidebar()" class="w-9 h-9 rounded-xl flex items-center justify-center text-base hover:bg-white/10 transition" style="color:var(--gold);">☰</button>
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:rgba(201,151,58,0.15);">
+          <span style="color:var(--gold); font-size:1.1rem;">◈</span>
+        </div>
+        <div>
+          <div class="serif text-lg leading-tight" style="color:var(--white);">SalesAssist</div>
+          <div class="text-xs flex items-center gap-1.5" style="color:#4ade80;">
+            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block"></span>
+            Online
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="flex items-center gap-4">
-        <!-- Role Switch -->
-        <div class="bg-slate-800 rounded-3xl p-1 flex text-sm">
-          <button onclick="switchRole('rep')" id="btn-rep" 
-            class="px-6 py-2 rounded-3xl transition">Sales Rep</button>
-          <button onclick="switchRole('admin')" id="btn-admin"
-            class="px-6 py-2 rounded-3xl transition flex items-center gap-2">
-            Admin <span class="text-amber-400">★</span>
-          </button>
-        </div>
+    <!-- Center: Nav tabs -->
+    <div class="flex items-center gap-1 rounded-full p-1" style="background:rgba(255,255,255,0.07);">
+      <button class="nav-tab active" id="tab-chat" onclick="switchTab('chat')">
+        <i class="fa-solid fa-message mr-1.5"></i>Chat
+      </button>
+      <button class="nav-tab" id="tab-resources" onclick="switchTab('resources')">
+        <i class="fa-solid fa-folder-open mr-1.5"></i>Resources
+      </button>
+    </div>
 
-        <div class="flex items-center gap-2 bg-slate-800 rounded-3xl px-4 py-1">
-          <button onclick="prevMessage()" class="px-3 py-2 hover:bg-white/10 rounded-2xl">↑</button>
-          <div id="position" class="font-medium px-4">1 / 1</div>
-          <button onclick="nextMessage()" class="px-3 py-2 hover:bg-white/10 rounded-2xl">↓</button>
-        </div>
-
-        <button onclick="newChat()" 
-          class="bg-white text-slate-900 px-6 py-3 rounded-3xl font-medium flex items-center gap-2 hover:shadow">
-          <i class="fa-solid fa-plus"></i> New Chat
+    <!-- Right: Role + Nav + New Chat -->
+    <div class="flex items-center gap-3">
+      <!-- Role switch -->
+      <div class="rounded-full p-1 flex" style="background:rgba(255,255,255,0.07);">
+        <button onclick="switchRole('rep')" id="btn-rep" class="role-pill">Sales Rep</button>
+        <button onclick="switchRole('admin')" id="btn-admin" class="role-pill flex items-center gap-1.5">
+          Admin <span style="color:var(--gold);">★</span>
         </button>
       </div>
-    </div>
-  </header>
-  
-  <div class="flex h-[calc(100vh-73px)]">
 
-    <!-- SIDEBAR -->
-    <div id="sidebar" class="sidebar w-80 bg-white border-r border-gray-200 h-full fixed shadow-2xl z-50 overflow-y-auto">
-      <div class="p-6">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-semibold">Conversations</h2>
-          <button onclick="toggleSidebar()" class="text-2xl">✕</button>
-        </div>
-
-        <!-- Admin Clear All -->
-        <div id="admin-actions" class="hidden mb-6">
-          <button onclick="clearAllChats()" 
-            class="w-full bg-red-50 hover:bg-red-100 text-red-600 py-3 rounded-2xl text-sm font-medium transition">
-            <i class="fa-solid fa-trash"></i> Clear All Chats
-          </button>
-        </div>
-
-        <div id="chat-history"></div>
-        <!-- Admin Upload Section -->
+      <!-- Message nav -->
+      <div class="hide-mobile flex items-center gap-1 rounded-full px-3 py-1" style="background:rgba(255,255,255,0.07);">
+        <button onclick="prevMessage()" class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white/10 text-sm" style="color:var(--text-muted);">↑</button>
+        <span id="position" class="text-xs px-2" style="color:var(--text-muted);">0 / 0</span>
+        <button onclick="nextMessage()" class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white/10 text-sm" style="color:var(--text-muted);">↓</button>
       </div>
+
+      <button onclick="newChat()" class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition" style="background:var(--gold); color:var(--navy);">
+        <i class="fa-solid fa-plus"></i><span class="hide-mobile">New Chat</span>
+      </button>
     </div>
 
-    <!-- MAIN CHAT AREA -->
-    <div class="flex-1 flex flex-col" style="margin-left: 0;">
-      <div id="chat-container" class="chat-container flex-1 overflow-y-auto space-y-8 pb-32" 
-       style="max-width: 760px; margin: 0 auto; width: 100%;"></div>
+  </div>
 
-      <!-- INPUT AREA -->
-      <div class="sticky bottom-0 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent pt-8 pb-6">
-        <div class="max-w-3xl mx-auto px-6">
-          <div class="relative flex items-end gap-2">
-            <!-- Hidden file input -->
+  <!-- Subtle gold underline -->
+  <div class="gold-line"></div>
+</header>
+
+<!-- ═══════════════════════════════ LAYOUT ═══════════════════════════════ -->
+<div class="flex" style="height: calc(100vh - 62px);">
+
+  <!-- ── SIDEBAR ── -->
+  <div id="sidebar" class="sidebar w-72 h-full fixed z-50 overflow-y-auto">
+    <div class="p-5">
+      <div class="flex justify-between items-center mb-6">
+        <span class="serif text-base" style="color:var(--white);">Conversations</span>
+        <button onclick="toggleSidebar()" class="text-lg hover:opacity-70 transition" style="color:var(--text-muted);">✕</button>
+      </div>
+
+      <!-- Admin clear -->
+      <div id="admin-actions" class="hidden mb-5">
+        <button onclick="clearAllChats()" class="w-full py-2.5 rounded-xl text-sm font-medium transition" style="background:rgba(239,68,68,0.1); color:#f87171;">
+          <i class="fa-solid fa-trash mr-2"></i>Clear All Chats
+        </button>
+      </div>
+
+      <div class="gold-line mb-5"></div>
+      <div id="chat-history"></div>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONTENT ── -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- CHAT PANEL -->
+    <div id="chat-panel" class="flex-1 flex flex-col overflow-hidden">
+      <div id="chat-container" class="chat-container flex-1 overflow-y-auto space-y-6"
+           style="max-width: 780px; margin: 0 auto; width: 100%;"></div>
+
+      <!-- Input area -->
+      <div class="input-shell sticky bottom-0 pt-6 pb-5 px-4">
+        <div style="max-width:760px; margin:0 auto;">
+          <div class="flex items-end gap-2">
+            <!-- Hidden file input (admin) -->
             <input id="chat-upload-input" type="file" accept=".pdf,.docx,.pptx" class="hidden" onchange="handleChatFileSelect(this)"/>
-            <!-- + Upload button (admin only) -->
             <button id="chat-upload-btn" onclick="document.getElementById('chat-upload-input').click()"
-              class="hidden flex-shrink-0 bg-white border border-gray-300 hover:border-blue-500 text-gray-500 hover:text-blue-600 w-12 h-12 rounded-2xl flex items-center justify-center transition shadow-sm mb-1"
-              title="Upload document">
-              <i class="fa-solid fa-plus text-lg"></i>
+              class="icon-btn hidden flex-shrink-0 w-11 h-11 rounded-2xl flex items-center justify-center transition mb-1" title="Upload document">
+              <i class="fa-solid fa-plus"></i>
             </button>
 
-<!-- STT Button -->
-<button id="stt-btn"
-  class="flex-shrink-0 bg-white border border-gray-300 hover:border-blue-500 text-gray-500 w-12 h-12 rounded-2xl flex items-center justify-center transition shadow-sm mb-1"
-  title="Voice Input">
-  <i class="fa-solid fa-microphone text-lg"></i>
-</button>
-            
+            <!-- STT -->
+            <button id="stt-btn"
+              class="icon-btn flex-shrink-0 w-11 h-11 rounded-2xl flex items-center justify-center transition mb-1" title="Voice Input">
+              <i class="fa-solid fa-microphone"></i>
+            </button>
+
             <div class="relative flex-1">
               <textarea id="user-input" rows="1"
-                class="w-full resize-none rounded-3xl border border-gray-300 focus:border-blue-500 focus:ring-0 px-7 py-5 pr-16 text-base shadow-sm"
-                placeholder="Ask me anything about sales..."></textarea>
-              
-              <button onclick="sendMessage()" 
-                class="absolute right-4 bottom-4 bg-blue-600 hover:bg-blue-700 text-white w-10 h-10 rounded-2xl flex items-center justify-center transition">
-                <i class="fa-solid fa-paper-plane"></i>
+                class="w-full resize-none rounded-3xl px-6 py-4 pr-16 shadow-sm"
+                placeholder="Ask anything about SmartGRID, products, pricing…"></textarea>
+              <button onclick="sendMessage()" class="send-btn absolute right-3 bottom-3 w-10 h-10 rounded-2xl flex items-center justify-center text-white transition">
+                <i class="fa-solid fa-paper-plane text-sm"></i>
               </button>
             </div>
           </div>
 
-          <!-- Upload status chip -->
-          <div id="chat-upload-status" class="hidden mt-2 ml-14 text-xs px-4 py-2 rounded-xl bg-blue-50 text-blue-600 flex items-center gap-2">
+          <!-- Upload status -->
+          <div id="chat-upload-status" class="hidden mt-2 ml-12 text-xs px-4 py-2 rounded-xl flex items-center gap-2" style="background:#EEF7F8; color:var(--teal);">
             <i class="fa-solid fa-file"></i>
-            <span id="chat-upload-label">No file selected</span>
-            <button onclick="submitChatUpload()" class="ml-auto bg-blue-600 text-white px-3 py-1 rounded-xl hover:bg-blue-700 transition text-xs font-medium">
-              Ingest
-            </button>
-            <button onclick="dismissChatUpload()" class="text-gray-400 hover:text-gray-600 ml-1">✕</button>
+            <span id="chat-upload-label">No file</span>
+            <button onclick="submitChatUpload()" class="ml-auto text-xs px-3 py-1 rounded-lg font-medium text-white" style="background:var(--teal);">Ingest</button>
+            <button onclick="dismissChatUpload()" style="color:var(--text-muted);">✕</button>
           </div>
-          <p class="text-center text-xs text-gray-400 mt-3">SalesAssist • Powered by AI</p>
+
+          <p class="text-center text-xs mt-3" style="color:var(--text-muted);">SalesAssist · The Sleep Company · Powered by AI</p>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- TOAST -->
-  <div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 toast">
-    <span id="toast-text"></span>
-  </div>
+    <!-- RESOURCES PANEL -->
+    <div id="resources-panel" class="flex-1 flex-col overflow-y-auto p-6" style="max-width:1100px; margin:0 auto; width:100%;">
 
-  <script>
-  async function handleLogin() {
+      <!-- Header row -->
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="serif text-2xl" style="color:var(--navy);">Resource Library</h2>
+          <p class="text-sm mt-1" style="color:var(--text-muted);">Brochures, datasheets & guides for your sales conversations</p>
+        </div>
+        <!-- Search -->
+        <div class="relative hide-mobile">
+          <input id="resource-search" oninput="filterResources()" type="text" placeholder="Search resources…"
+            class="login-input pl-10" style="width:240px; padding:10px 16px 10px 38px;"/>
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs" style="color:var(--text-muted);"></i>
+        </div>
+      </div>
+
+      <!-- Filter tags -->
+      <div class="flex flex-wrap gap-2 mb-6" id="resource-filters">
+        <button onclick="filterByTag('all')" class="resource-filter-btn active-filter px-4 py-1.5 rounded-full text-xs font-semibold transition" data-tag="all">All</button>
+        <button onclick="filterByTag('brochure')" class="resource-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold transition" data-tag="brochure" style="background:#EEF7F8; color:var(--teal);">Brochures</button>
+        <button onclick="filterByTag('price')" class="resource-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold transition" data-tag="price" style="background:#FFF8EC; color:var(--gold);">Price Lists</button>
+        <button onclick="filterByTag('datasheet')" class="resource-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold transition" data-tag="datasheet" style="background:#EEF0FF; color:#5B67E0;">Datasheets</button>
+        <button onclick="filterByTag('guide')" class="resource-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold transition" data-tag="guide" style="background:#F0FFF4; color:#2E8B57;">Sales Guides</button>
+      </div>
+
+      <style>
+        .active-filter { background: var(--navy) !important; color: #fff !important; }
+        .resource-filter-btn { border: 1px solid var(--cream-dark); cursor: pointer; }
+      </style>
+
+      <!-- Grid of resource cards -->
+      <div id="resource-grid" class="grid gap-4" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
+
+        <!-- Cards rendered by JS -->
+
+      </div>
+
+      <!-- Pin-to-chat bar -->
+      <div id="pin-bar" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 rounded-2xl px-6 py-3 flex items-center gap-4 shadow-2xl z-50" style="background:var(--navy); border:1px solid rgba(201,151,58,0.3);">
+        <i class="fa-solid fa-paperclip" style="color:var(--gold);"></i>
+        <span id="pin-label" class="text-sm text-white">1 file selected</span>
+        <button onclick="pinToChat()" class="px-4 py-1.5 rounded-xl text-sm font-semibold" style="background:var(--gold); color:var(--navy);">Send to Chat</button>
+        <button onclick="clearPinned()" style="color:var(--text-muted); background:none; border:none; cursor:pointer; font-size:1.1rem;">✕</button>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 text-sm px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 toast z-50" style="background:var(--navy); color:#fff; border:1px solid rgba(201,151,58,0.25);">
+  <span id="toast-text"></span>
+</div>
+
+<!-- ════════════════════════════════ SCRIPT ════════════════════════════════ -->
+<script>
+
+// ── Config ──────────────────────────────────────────────────────────────────
+const BACKEND_URL = "https://sales-chatbot-7wsa.onrender.com";
+let currentRole   = "rep";
+let currentChatId = null;
+let messages      = [];
+let chatHistory   = {};
+let focusedIndex  = -1;
+let currentTab    = "chat";
+let pinnedFiles   = [];
+let activeTagFilter = "all";
+
+// ── Resource data ────────────────────────────────────────────────────────────
+const RESOURCES = [
+  { id:1, title:"SmartGRID Mattress Brochure",       tag:"brochure",  icon:"fa-bed",          desc:"Full product overview, tech specs, and comfort claims for SmartGRID range.",   url:"#" },
+  { id:2, title:"ErgoSmart Chair Brochure",           tag:"brochure",  icon:"fa-chair",        desc:"Office chair series – dimensions, lumbar support, fabric options.",             url:"#" },
+  { id:3, title:"Recliner Sofa Catalogue",            tag:"brochure",  icon:"fa-couch",        desc:"Motorized recliner range with color swatches and recline angles.",              url:"#" },
+  { id:4, title:"Mattress Price List – FY 2025–26",   tag:"price",     icon:"fa-tag",          desc:"Retail and dealer pricing for all mattress SKUs. Updated April 2025.",          url:"#" },
+  { id:5, title:"Chair & Desk Price List",            tag:"price",     icon:"fa-tag",          desc:"Current MRP and dealer margins for seating and adjustable desks.",             url:"#" },
+  { id:6, title:"SmartGRID Technology Datasheet",    tag:"datasheet", icon:"fa-microchip",    desc:"Material science, grid dimensions, airflow data, hyper-elastic polymer specs.", url:"#" },
+  { id:7, title:"Orthopedic Support Datasheet",       tag:"datasheet", icon:"fa-microscope",   desc:"Clinical test results, spine alignment data, pressure-point mapping.",          url:"#" },
+  { id:8, title:"Competitor Comparison Sheet",        tag:"datasheet", icon:"fa-chart-bar",    desc:"Side-by-side comparison vs memory foam, latex, and spring competitors.",        url:"#" },
+  { id:9, title:"Sales Rep Objection Handling Guide", tag:"guide",     icon:"fa-book-open",    desc:"Top 20 customer objections with scripted responses and closing tips.",          url:"#" },
+  { id:10,title:"100-Night Trial FAQ Guide",          tag:"guide",     icon:"fa-clock-rotate-left", desc:"Process, eligibility, pickup logistics, and customer script.",             url:"#" },
+  { id:11,title:"Store Demo Script",                  tag:"guide",     icon:"fa-comments",     desc:"Step-by-step in-store demo walkthrough for Comfort Specialists.",              url:"#" },
+  { id:12,title:"SmartGRID Pillow Brochure",          tag:"brochure",  icon:"fa-wind",         desc:"Pillow range – firmness levels, cooling covers, size guide.",                  url:"#" },
+];
+
+// ── Login ────────────────────────────────────────────────────────────────────
+async function handleLogin() {
   const email    = document.getElementById("login-email").value.trim();
   const password = document.getElementById("login-password").value.trim();
-
   if (!email || !password) return;
-
   try {
     const res = await fetch(`${BACKEND_URL}/login`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    email: email,
-    password: password
-  })
-});
-    if (!res.ok) {
-      document.getElementById("login-error").classList.remove("hidden");
-      return;
-    }
-
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ email, password })
+    });
+    if (!res.ok) { document.getElementById("login-error").classList.remove("hidden"); return; }
     const data = await res.json();
-
-    // Store in localStorage
-    localStorage.setItem("employee_id", data.employee_id);
+    localStorage.setItem("employee_id",   data.employee_id);
     localStorage.setItem("employee_name", data.name);
-    localStorage.setItem("role", data.role);
-
-    // Hide login screen
+    localStorage.setItem("role",          data.role);
     document.getElementById("login-screen").classList.add("hidden");
-
-    // Initialize chat
     switchRole(data.role === "admin" ? "admin" : "rep");
-
-  } catch (err) {
+  } catch {
     document.getElementById("login-error").classList.remove("hidden");
   }
 }
 
-// Also support Enter key
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("login-password").addEventListener("keydown", (e) => {
+  document.getElementById("login-password").addEventListener("keydown", e => {
     if (e.key === "Enter") handleLogin();
   });
 });
-    // ==================== CONFIG ====================
-    const BACKEND_URL = "https://sales-chatbot-7wsa.onrender.com";
-    let currentRole = "rep"; // "rep" or "admin"
-    let currentChatId = null;
-    let messages = [];
-    let chatHistory = {};
-    let focusedIndex = -1;
 
-    // Load from localStorage
-    function loadData() {
-      const saved = localStorage.getItem(`salesassist_${currentRole}`);
-      if (saved) {
-        chatHistory = JSON.parse(saved);
-      }
-      renderChatHistory();
-    }
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById("tab-chat").classList.toggle("active", tab === "chat");
+  document.getElementById("tab-resources").classList.toggle("active", tab === "resources");
+  document.getElementById("chat-panel").style.display      = tab === "chat"      ? "flex"  : "none";
+  document.getElementById("resources-panel").style.display = tab === "resources" ? "flex"  : "none";
+  if (tab === "resources") renderResources();
+}
 
-    function saveData() {
-      localStorage.setItem(`salesassist_${currentRole}`, JSON.stringify(chatHistory));
-    }
+// ── Role switch ───────────────────────────────────────────────────────────────
+function switchRole(role) {
+  currentRole = role;
+  document.getElementById("btn-rep").classList.toggle("active",   role === "rep");
+  document.getElementById("btn-admin").classList.toggle("active", role === "admin");
+  document.getElementById("admin-actions").classList.toggle("hidden",   role !== "admin");
+  document.getElementById("chat-upload-btn").classList.toggle("hidden", role !== "admin");
+  if (role !== "admin") dismissChatUpload();
+  loadData(); newChat();
+}
 
-    // Switch Role
-    function switchRole(role) {
-      currentRole = role;
-      document.getElementById("btn-rep").classList.toggle("bg-white", role === "rep");
-      document.getElementById("btn-rep").classList.toggle("text-black", role === "rep");
-      document.getElementById("btn-admin").classList.toggle("bg-white", role === "admin");
-      document.getElementById("btn-admin").classList.toggle("text-black", role === "admin");
-      
-      document.getElementById("admin-actions").classList.toggle("hidden", role !== "admin");
-      document.getElementById("chat-upload-btn").classList.toggle("hidden", role !== "admin");
-      if (role !== "admin") dismissChatUpload();
-      
-      loadData();
-      newChat();
-    }
+// ── Data helpers ──────────────────────────────────────────────────────────────
+function loadData() {
+  const saved = localStorage.getItem(`salesassist_${currentRole}`);
+  chatHistory = saved ? JSON.parse(saved) : {};
+  renderChatHistory();
+}
+function saveData() {
+  localStorage.setItem(`salesassist_${currentRole}`, JSON.stringify(chatHistory));
+}
 
-    // Toggle Sidebar
-    function toggleSidebar() {
-      document.getElementById("sidebar").classList.toggle("open");
-    }
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+function toggleSidebar() { document.getElementById("sidebar").classList.toggle("open"); }
 
-    // Render Chat History
-    function renderChatHistory() {
-      const container = document.getElementById("chat-history");
-      container.innerHTML = "";
+// ── Chat history render ───────────────────────────────────────────────────────
+function renderChatHistory() {
+  const container = document.getElementById("chat-history");
+  container.innerHTML = "";
+  const groups = { Today:[], Yesterday:[], Earlier:[] };
+  Object.keys(chatHistory).forEach(id => {
+    const chat = chatHistory[id];
+    const diff = Math.floor((Date.now() - new Date(chat.timestamp)) / 86400000);
+    groups[diff === 0 ? "Today" : diff === 1 ? "Yesterday" : "Earlier"].push({ id, ...chat });
+  });
+  Object.keys(groups).forEach(group => {
+    if (!groups[group].length) return;
+    const div = document.createElement("div");
+    div.className = "mb-5";
+    div.innerHTML = `<p class="text-xs uppercase mb-2" style="color:var(--text-muted); letter-spacing:0.08em;">${group}</p>`;
+    groups[group].forEach(chat => {
+      const item = document.createElement("div");
+      item.className = `history-item px-3 py-2.5 mb-1 cursor-pointer flex justify-between items-center ${chat.id === currentChatId ? "active-chat" : ""}`;
+      item.innerHTML = `
+        <div class="flex-1 truncate mr-2">
+          <div class="text-sm font-medium truncate" style="color:${chat.id === currentChatId ? "var(--gold)" : "var(--white)"};">${chat.title || "New Conversation"}</div>
+          <div class="text-xs" style="color:var(--text-muted);">${new Date(chat.timestamp).toLocaleDateString()}</div>
+        </div>
+        <button onclick="deleteChat('${chat.id}'); event.stopImmediatePropagation()" style="color:#f87171; background:none; border:none; cursor:pointer; padding:4px;">
+          <i class="fa-solid fa-trash text-xs"></i>
+        </button>`;
+      item.onclick = () => loadChat(chat.id);
+      div.appendChild(item);
+    });
+    container.appendChild(div);
+  });
+}
 
-      const groups = { Today: [], Yesterday: [], Earlier: [] };
+function generateTitle(msg) { return msg.length > 42 ? msg.substring(0, 39) + "…" : msg; }
 
-      Object.keys(chatHistory).forEach(id => {
-        const chat = chatHistory[id];
-        const date = new Date(chat.timestamp);
-        const diffDays = Math.floor((Date.now() - date) / (1000*60*60*24));
+function newChat() {
+  currentChatId = "chat_" + Date.now();
+  messages = []; focusedIndex = -1;
+  renderMessages(); renderChatHistory();
+}
 
-        let group = "Earlier";
-        if (diffDays === 0) group = "Today";
-        else if (diffDays === 1) group = "Yesterday";
+function loadChat(id) {
+  currentChatId = id;
+  messages = chatHistory[id].messages || [];
+  focusedIndex = messages.length > 0 ? 0 : -1;
+  renderMessages(); renderChatHistory(); toggleSidebar();
+}
 
-        groups[group].push({ id, ...chat });
-      });
+function deleteChat(id) {
+  if (confirm("Delete this conversation?")) {
+    delete chatHistory[id];
+    if (currentChatId === id) newChat();
+    saveData(); renderChatHistory();
+  }
+}
 
-      Object.keys(groups).forEach(group => {
-        if (groups[group].length === 0) return;
+function clearAllChats() {
+  if (confirm("Clear ALL chats?")) { chatHistory = {}; saveData(); newChat(); }
+}
 
-        const div = document.createElement("div");
-        div.className = "mb-6";
-        div.innerHTML = `<p class="text-xs uppercase tracking-widest text-gray-400 mb-2">${group}</p>`;
-
-        groups[group].forEach(chat => {
-          const item = document.createElement("div");
-          item.className = `history-item px-4 py-3 rounded-2xl mb-1 cursor-pointer flex justify-between items-center ${chat.id === currentChatId ? 'bg-blue-50' : ''}`;
-          item.innerHTML = `
-            <div class="flex-1 truncate">
-              <div class="font-medium text-sm">${chat.title || "New Conversation"}</div>
-              <div class="text-xs text-gray-500">${new Date(chat.timestamp).toLocaleDateString()}</div>
-            </div>
-            <button onclick="deleteChat('${chat.id}'); event.stopImmediatePropagation()" 
-              class="text-red-400 hover:text-red-600 p-1">
-              <i class="fa-solid fa-trash text-xs"></i>
-            </button>
-          `;
-          item.onclick = () => loadChat(chat.id);
-          div.appendChild(item);
-        });
-        container.appendChild(div);
-      });
-    }
-
-    function generateTitle(firstMessage) {
-      return firstMessage.length > 40 ? firstMessage.substring(0, 37) + "..." : firstMessage;
-    }
-
-    // New Chat
-    function newChat() {
-      currentChatId = "chat_" + Date.now();
-      messages = [];
-      focusedIndex = -1;
-      renderMessages();
-      renderChatHistory();
-    }
-
-    // Load specific chat
-    function loadChat(chatId) {
-      currentChatId = chatId;
-      messages = chatHistory[chatId].messages || [];
-      focusedIndex = messages.length > 0 ? 0 : -1;
-      renderMessages();
-      renderChatHistory();
-      toggleSidebar();
-    }
-
-    function deleteChat(chatId) {
-      if (confirm("Delete this conversation?")) {
-        delete chatHistory[chatId];
-        if (currentChatId === chatId) newChat();
-        saveData();
-        renderChatHistory();
-      }
-    }
-
-    function clearAllChats() {
-      if (confirm("Clear ALL chats for this admin session?")) {
-        chatHistory = {};
-        saveData();
-        newChat();
-      }
-    }
+// ── Text helpers ──────────────────────────────────────────────────────────────
 function formatText(text) {
   return text
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" class="text-blue-600 underline">$1</a>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" style="color:var(--teal-light); text-decoration:underline;">$1</a>')
     .replace(/\*([\w].*?)\*/g, '• $1')
     .replace(/_(.*?)_/g, '<em>$1</em>')
     .replace(/\n/g, '<br>');
@@ -469,464 +700,378 @@ function formatText(text) {
 
 function renderAnswer(content) {
   const words = content.split(' ');
-  if (words.length <= 50) return formatText(content);
-  
-  const preview = words.slice(0, 50).join(' ');
-  const rest    = words.slice(50).join(' ');
-  
+  if (words.length <= 55) return formatText(content);
+  const preview = words.slice(0, 55).join(' ');
   return `
-    <span class="answer-preview">${formatText(preview)}...</span>
+    <span class="answer-preview">${formatText(preview)}…</span>
     <span class="answer-full hidden">${formatText(content)}</span>
-    <button onclick="toggleReadMore(this)" 
-      class="text-blue-500 text-xs mt-2 block">
-      Read more ↓
-    </button>
-  `;
+    <button onclick="toggleReadMore(this)" class="text-xs mt-2 block" style="color:var(--teal-light);">Read more ↓</button>`;
 }
 
 function toggleReadMore(btn) {
-  const bubble  = btn.parentElement;
-  const preview = bubble.querySelector('.answer-preview');
-  const full    = bubble.querySelector('.answer-full');
-  const isHidden = full.classList.contains('hidden');
-  
-  preview.classList.toggle('hidden', isHidden);
-  full.classList.toggle('hidden', !isHidden);
-  btn.textContent = isHidden ? 'Read less ↑' : 'Read more ↓';
+  const b  = btn.parentElement;
+  const pr = b.querySelector('.answer-preview');
+  const fu = b.querySelector('.answer-full');
+  const h  = fu.classList.contains('hidden');
+  pr.classList.toggle('hidden', h);
+  fu.classList.toggle('hidden', !h);
+  btn.textContent = h ? 'Read less ↑' : 'Read more ↓';
+  btn.style.color = 'var(--teal-light)';
 }
-    
-    // Render Messages
-    function renderMessages() {
-      const container = document.getElementById("chat-container");
-      container.innerHTML = "";
 
-      messages.forEach((msg, index) => {
-        const div = document.createElement("div");
-        div.className = `flex ${msg.role === "user" ? "justify-end" : "justify-start"} ${focusedIndex === index ? "focused" : ""}`;
+// ── Render messages ───────────────────────────────────────────────────────────
+function renderMessages() {
+  const container = document.getElementById("chat-container");
+  container.innerHTML = "";
 
-        div.innerHTML = `
-          <div class="${msg.role === 'user' ? 'max-w-[45%] ml-auto' : 'max-w-[45%] mr-auto'}">
-            <div class="message-bubble ${msg.role === "user" ? "user-bubble" : "bot-bubble"}">
-            ${msg.role === 'assistant' ? `
-  <div>${renderAnswer(msg.content)}</div>
-
-  <div class="flex mt-3 gap-3">
-  <button class="tts-inline-btn text-xs text-gray-500 hover:text-green-600 flex items-center gap-2">
-    <i class="fa-solid fa-volume-high"></i> Listen
-  </button>
-  <button class="tts-stop-btn hidden text-xs text-red-500 hover:text-red-700 flex items-center gap-2">
-    <i class="fa-solid fa-stop"></i> Stop
-  </button>
-</div>
-` : msg.content}
-            </div>
-
-${msg.role === "assistant" ? `
-
-<!-- Sources -->
-${((msg.db_sources && msg.db_sources.length) || (msg.internet_sources && msg.internet_sources.length)) ? `
-<details class="sources-section mt-4">
-  <summary class="sources-toggle cursor-pointer text-blue-600 text-sm">
-    📄 View Sources
-  </summary>
-  <div class="mt-3 space-y-2 text-xs">
-    ${(msg.db_sources || []).map(s => `<div class="bg-slate-50 p-3 rounded-xl">📁 ${s}</div>`).join('')}
-    ${(msg.internet_sources || []).map(s => `<a href="${s.url || '#'}" target="_blank" class="block bg-slate-50 p-3 rounded-xl">🌐 ${s.title || s}</a>`).join('')}
-  </div>
-</details>` : ''}
-
-<!-- Rating -->
-<div class="flex items-center gap-3 mt-5 text-xs text-slate-500">
-  <span>Was this helpful?</span>
-  <button onclick="rateMessage(${index}, 'yes')" class="text-3xl">👍</button>
-  <button onclick="rateMessage(${index}, 'no')" class="text-3xl">👎</button>
-</div>
-
-<!-- Followups -->
-${msg.followups && msg.followups.length ? `
-  <div class="mt-4 flex flex-wrap gap-2">
-    ${msg.followups.map(q => `
-      <button 
-        onclick="useFollowup('${q.replace(/'/g, "\\'")}')"
-        class="bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs px-4 py-2 rounded-2xl">
-        ${q}
-      </button>
-    `).join('')}
-  </div>
-` : ''}
-
-` : ''}
-            
-            <div class="flex items-center gap-3 mt-4 ${msg.role === "user" ? "justify-end" : "justify-start"}">
-              <span class="text-xs text-gray-400">${msg.time}</span>
-              <button onclick="copyMessage('${index}')" 
-                class="text-gray-400 hover:text-blue-600 transition">
-                <i class="fa-solid fa-copy"></i>
-              </button>
-            </div>
-          </div>
-        `;
-
-        container.appendChild(div);
-        // Attach TTS click
-div.querySelectorAll('.tts-inline-btn').forEach(btn => {
-  const stopBtn = btn.parentElement.querySelector('.tts-stop-btn');
-
-  btn.onclick = () => {
-    speakText(msg.content, btn, stopBtn);
-    btn.classList.add('hidden');
-    stopBtn.classList.remove('hidden');
-  };
-
-  stopBtn.onclick = () => {
-    window.speechSynthesis.cancel();
-    stopBtn.classList.add('hidden');
-    btn.classList.remove('hidden');
-  };
-});
-      });
-
-      // Scroll to bottom
-      container.scrollTop = container.scrollHeight;
-
-      // Update position counter
-      document.getElementById("position").textContent = 
-        messages.length > 0 ? `${focusedIndex + 1} / ${messages.length}` : "0 / 0";
-    }
-    
-    function copyMessage(index) {
-      const text = messages[index].content;
-      navigator.clipboard.writeText(text).then(() => {
-        showToast("✓ Copied to clipboard");
-      });
-    }
-    async function rateMessage(index, rating) {
-  const message = messages[index];
-
-  if (!message.message_id) {
-    console.error("No message_id found");
+  if (!messages.length) {
+    container.innerHTML = `
+      <div class="flex flex-col items-center justify-center h-full py-20 opacity-60">
+        <div class="text-4xl mb-4" style="color:var(--gold);">◈</div>
+        <div class="serif text-2xl mb-2" style="color:var(--navy);">Good ${getGreeting()}</div>
+        <div class="text-sm" style="color:var(--text-muted);">Ask me anything about SmartGRID products, pricing, or sales strategies.</div>
+      </div>`;
+    document.getElementById("position").textContent = "0 / 0";
     return;
   }
 
+  messages.forEach((msg, index) => {
+    const div = document.createElement("div");
+    div.className = `flex ${msg.role === "user" ? "justify-end" : "justify-start"}`;
+
+    const hasSources = (msg.db_sources?.length || msg.internet_sources?.length);
+
+    div.innerHTML = `
+      <div class="${msg.role === 'user' ? 'max-w-[60%] ml-auto' : 'max-w-[68%] mr-auto'}">
+        <div class="message-bubble ${msg.role === 'user' ? 'user-bubble' : 'bot-bubble'}">
+          ${msg.role === 'assistant' ? `
+            <div>${renderAnswer(msg.content)}</div>
+            <div class="flex items-center gap-4 mt-3 pt-3" style="border-top:1px solid var(--cream-dark);">
+              <button class="tts-listen-btn"><i class="fa-solid fa-volume-high"></i> Listen</button>
+              <button class="tts-stop-btn"><i class="fa-solid fa-stop"></i> Stop</button>
+            </div>
+          ` : msg.content}
+        </div>
+
+        ${msg.role === 'assistant' ? `
+          ${hasSources ? `
+            <details class="mt-3">
+              <summary class="text-xs cursor-pointer" style="color:var(--teal-light); list-style:none;">📄 View Sources</summary>
+              <div class="mt-2 space-y-1.5 text-xs">
+                ${(msg.db_sources || []).map(s => `<div class="px-3 py-2 rounded-lg" style="background:var(--cream); color:var(--navy);">📁 ${s}</div>`).join('')}
+                ${(msg.internet_sources || []).map(s => `<a href="${s.url||'#'}" target="_blank" class="block px-3 py-2 rounded-lg" style="background:var(--cream); color:var(--teal);">🌐 ${s.title||s}</a>`).join('')}
+              </div>
+            </details>` : ''}
+
+          <div class="flex items-center gap-3 mt-3 text-xs" style="color:var(--text-muted);">
+            <span>Helpful?</span>
+            <button onclick="rateMessage(${index},'yes')" class="hover:scale-125 transition-transform text-xl">👍</button>
+            <button onclick="rateMessage(${index},'no')"  class="hover:scale-125 transition-transform text-xl">👎</button>
+          </div>
+
+          ${msg.followups?.length ? `
+            <div class="mt-3 flex flex-wrap gap-2">
+              ${msg.followups.map(q => `
+                <button onclick="useFollowup('${q.replace(/'/g,"\\'")}'))" class="followup-chip">${q}</button>`).join('')}
+            </div>` : ''}
+        ` : ''}
+
+        <div class="flex items-center gap-2 mt-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}">
+          <span class="text-xs" style="color:var(--text-muted);">${msg.time}</span>
+          <button onclick="copyMessage(${index})" class="text-xs hover:opacity-70 transition" style="color:var(--text-muted);">
+            <i class="fa-solid fa-copy"></i>
+          </button>
+        </div>
+      </div>`;
+
+    container.appendChild(div);
+
+    // TTS button wiring
+    const listenBtn = div.querySelector('.tts-listen-btn');
+    const stopBtn   = div.querySelector('.tts-stop-btn');
+    if (listenBtn) {
+      listenBtn.onclick = () => {
+        speakText(msg.content, listenBtn, stopBtn);
+        listenBtn.style.display = 'none';
+        stopBtn.style.display   = 'flex';
+      };
+      stopBtn.onclick = () => {
+        window.speechSynthesis.cancel();
+        stopBtn.style.display   = 'none';
+        listenBtn.style.display = 'flex';
+      };
+    }
+  });
+
+  container.scrollTop = container.scrollHeight;
+  document.getElementById("position").textContent = `${focusedIndex + 1} / ${messages.length}`;
+}
+
+function getGreeting() {
+  const h = new Date().getHours();
+  return h < 12 ? "morning" : h < 17 ? "afternoon" : "evening";
+}
+
+function copyMessage(i) {
+  navigator.clipboard.writeText(messages[i].content).then(() => showToast("✓ Copied"));
+}
+
+async function rateMessage(index, rating) {
+  const msg = messages[index];
+  if (!msg.message_id) return;
   try {
-    await fetch(`${BACKEND_URL}/chat/${message.message_id}/rate`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+    await fetch(`${BACKEND_URL}/chat/${msg.message_id}/rate`, {
+      method:"PATCH", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ rating: rating === "yes" ? "thumbs_up" : "thumbs_down" })
+    });
+  } catch {}
+}
+
+function showToast(text) {
+  const t = document.getElementById("toast");
+  document.getElementById("toast-text").textContent = text;
+  t.classList.remove("hidden");
+  setTimeout(() => t.classList.add("hidden"), 2200);
+}
+
+function prevMessage() { if (focusedIndex > 0) { focusedIndex--; renderMessages(); } }
+function nextMessage() { if (focusedIndex < messages.length-1) { focusedIndex++; renderMessages(); } }
+function useFollowup(text) { document.getElementById("user-input").value = text; sendMessage(); }
+
+// ── Send message ──────────────────────────────────────────────────────────────
+async function sendMessage() {
+  const input = document.getElementById("user-input");
+  const query = input.value.trim();
+  if (!query) return;
+  switchTab("chat");
+
+  const now     = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', hour12:true });
+
+  messages.push({ role:"user", content:query, time:timeStr });
+
+  if (messages.length === 1) {
+    chatHistory[currentChatId] = { title:generateTitle(query), timestamp:Date.now(), messages };
+  } else if (chatHistory[currentChatId]) {
+    chatHistory[currentChatId].messages = messages;
+  }
+
+  focusedIndex = messages.length - 1;
+  renderMessages(); saveData();
+  localStorage.setItem(`lastChatId_${currentRole}`, currentChatId);
+  input.value = "";
+
+  // Typing indicator
+  const typingDiv = document.createElement("div");
+  typingDiv.id = "typing-indicator";
+  typingDiv.className = "flex justify-start";
+  typingDiv.innerHTML = `<div class="bot-bubble px-5 py-4"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  document.getElementById("chat-container").appendChild(typingDiv);
+  document.getElementById("chat-container").scrollTop = 9999;
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/chat`, {
+      method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify({
-        rating: rating === "yes" ? "thumbs_up" : "thumbs_down"
+        employee_id: localStorage.getItem("employee_id"),
+        role:        localStorage.getItem("role"),
+        query, session_id: null
       })
     });
+    const data = await res.json();
+    typingDiv.remove();
 
-    // UI animation (keep your existing effect)
-    const buttons = document.querySelectorAll(`button[onclick^="rateMessage(${index}"]`);
-    
-    buttons.forEach(btn => {
-      if (btn.textContent === (rating === 'yes' ? '👍' : '👎')) {
-        btn.style.transform = 'scale(1.6)';
-        setTimeout(() => {
-          btn.style.transform = 'scale(1)';
-        }, 300);
-      }
+    const botTime = new Date().toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', hour12:true });
+    messages.push({
+      role:"assistant",
+      content:          data.answer || "Sorry, I couldn't process that.",
+      time:             botTime,
+      db_sources:       data.db_sources   || [],
+      internet_sources: data.web_sources  || [],
+      followups:        data.followups    || [],
+      message_id:       data.message_id   || null
     });
-
-  } catch (err) {
-    console.error("Rating failed:", err);
-  }
-}
-    
-    function showToast(message) {
-      const toast = document.getElementById("toast");
-      document.getElementById("toast-text").innerHTML = message;
-      toast.classList.remove("hidden");
-      setTimeout(() => toast.classList.add("hidden"), 2000);
-    }
-
-    // Navigation
-    function prevMessage() {
-      if (focusedIndex > 0) {
-        focusedIndex--;
-        renderMessages();
-      }
-    }
-
-    function nextMessage() {
-      if (focusedIndex < messages.length - 1) {
-        focusedIndex++;
-        renderMessages();
-      }
-    }
-function handleFileSelect(input) {
-  const file = input.files[0];
-  if (file) {
-    document.getElementById("upload-filename").textContent = file.name;
+    focusedIndex = messages.length - 1;
+    if (chatHistory[currentChatId]) chatHistory[currentChatId].messages = messages;
+    saveData(); renderMessages();
+  } catch {
+    typingDiv.remove();
+    messages.push({ role:"assistant", content:"Error connecting to server. Please try again.", time: new Date().toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', hour12:true }) });
+    renderMessages();
   }
 }
 
-// Chat bar upload handlers
+document.getElementById("user-input").addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+
+// ── TTS ───────────────────────────────────────────────────────────────────────
+window.speakText = function(text, listenBtn, stopBtn) {
+  const clean = text.replace(/[*#_`]/g, '');
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance();
+  utt.text = clean; utt.lang = 'en-US'; utt.rate = 1.1;
+  utt.onend = () => {
+    if (stopBtn)   stopBtn.style.display   = 'none';
+    if (listenBtn) listenBtn.style.display = 'flex';
+  };
+  window.speechSynthesis.speak(utt);
+};
+
+// ── STT ───────────────────────────────────────────────────────────────────────
+const sttBtn = document.getElementById('stt-btn');
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SR();
+  recognition.continuous = false; recognition.interimResults = true; recognition.lang = 'en-US';
+  recognition.onstart = () => { sttBtn.classList.add('stt-listening'); document.getElementById('user-input').placeholder = "Listening…"; };
+  recognition.onresult = e => {
+    let final = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript;
+      else document.getElementById('user-input').value = e.results[i][0].transcript;
+    }
+    if (final) document.getElementById('user-input').value = final;
+  };
+  recognition.onend = () => {
+    sttBtn.classList.remove('stt-listening');
+    document.getElementById('user-input').placeholder = "Ask anything about SmartGRID, products, pricing…";
+    if (document.getElementById('user-input').value.trim()) sendMessage();
+  };
+  recognition.onerror = () => {
+    sttBtn.classList.remove('stt-listening');
+    document.getElementById('user-input').placeholder = "Ask anything about SmartGRID, products, pricing…";
+  };
+  sttBtn.addEventListener('click', () => sttBtn.classList.contains('stt-listening') ? recognition.stop() : recognition.start());
+} else { sttBtn.style.display = 'none'; }
+
+// ── Admin upload ──────────────────────────────────────────────────────────────
 function handleChatFileSelect(input) {
-  const file = input.files[0];
-  if (!file) return;
+  const file = input.files[0]; if (!file) return;
   document.getElementById("chat-upload-label").textContent = file.name;
   document.getElementById("chat-upload-status").classList.remove("hidden");
 }
-
 function dismissChatUpload() {
   document.getElementById("chat-upload-input").value = "";
-  document.getElementById("chat-upload-label").textContent = "No file selected";
+  document.getElementById("chat-upload-label").textContent = "No file";
   document.getElementById("chat-upload-status").classList.add("hidden");
 }
-
 async function submitChatUpload() {
   const input = document.getElementById("chat-upload-input");
   const label = document.getElementById("chat-upload-label");
-  const file  = input.files[0];
-  if (!file) return;
-  label.textContent = "⏳ Uploading...";
+  const file  = input.files[0]; if (!file) return;
+  label.textContent = "⏳ Uploading…";
   try {
-    const formData = new FormData();
-    formData.append("file", file);
-    const res  = await fetch(`${BACKEND_URL}/admin/ingest`, { method: "POST", body: formData });
+    const fd = new FormData(); fd.append("file", file);
+    const res  = await fetch(`${BACKEND_URL}/admin/ingest`, { method:"POST", body:fd });
     const data = await res.json();
-    if (res.ok) {
-      showToast(`✅ ${data.chunks} chunks ingested (${data.category})`);
-    } else {
-      showToast(`❌ ${data.detail || "Ingestion failed"}`);
-    }
-  } catch {
-    showToast("❌ Connection error");
-  }
+    showToast(res.ok ? `✅ ${data.chunks} chunks ingested` : `❌ ${data.detail || "Failed"}`);
+  } catch { showToast("❌ Connection error"); }
   dismissChatUpload();
 }
 
-async function uploadDocument() {
-  const input  = document.getElementById("upload-input");
-  const status = document.getElementById("upload-status");
-  const file   = input.files[0];
+// ── Resource Library ──────────────────────────────────────────────────────────
+function renderResources(filter) {
+  const search = (document.getElementById("resource-search")?.value || "").toLowerCase();
+  const tag    = filter !== undefined ? filter : activeTagFilter;
+  const grid   = document.getElementById("resource-grid");
+  grid.innerHTML = "";
 
-  if (!file) {
-    showToast("Please select a file first");
+  const filtered = RESOURCES.filter(r =>
+    (tag === "all" || r.tag === tag) &&
+    (!search || r.title.toLowerCase().includes(search) || r.desc.toLowerCase().includes(search))
+  );
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="col-span-full text-center py-16 text-sm" style="color:var(--text-muted);">No resources found.</div>`;
     return;
   }
 
-  // Show loading
-  status.className = "mt-3 text-sm text-center py-2 rounded-xl bg-blue-50 text-blue-600";
-  status.textContent = "⏳ Uploading and ingesting...";
-  status.classList.remove("hidden");
+  filtered.forEach(r => {
+    const tagMap = { brochure:"tag-brochure", price:"tag-price", datasheet:"tag-datasheet", guide:"tag-guide" };
+    const tagLabel = { brochure:"Brochure", price:"Price List", datasheet:"Datasheet", guide:"Sales Guide" };
+    const isPinned = pinnedFiles.includes(r.id);
 
-  try {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res  = await fetch(`${BACKEND_URL}/admin/ingest`, {
-      method: "POST",
-      body:   formData
-    });
-    const data = await res.json();
-
-    if (res.ok) {
-      status.className   = "mt-3 text-sm text-center py-2 rounded-xl bg-green-50 text-green-600";
-      status.textContent = `✅ ${data.chunks} chunks ingested (${data.category})`;
-      input.value        = "";
-      document.getElementById("upload-filename").textContent = "Click to select file";
-    } else {
-      status.className   = "mt-3 text-sm text-center py-2 rounded-xl bg-red-50 text-red-600";
-      status.textContent = `❌ ${data.detail || "Ingestion failed"}`;
-    }
-
-  } catch (err) {
-    status.className   = "mt-3 text-sm text-center py-2 rounded-xl bg-red-50 text-red-600";
-    status.textContent = "❌ Connection error";
-  }
-}
-    // Send Message
-    async function sendMessage() {
-      const input = document.getElementById("user-input");
-      const query = input.value.trim();
-      if (!query) return;
-
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-
-      // Add user message
-      messages.push({
-        role: "user",
-        content: query,
-        time: timeStr
-      });
-
-      // Auto title first message
-      if (messages.length === 1) {
-        const title = generateTitle(query);
-        chatHistory[currentChatId] = {
-          title: title,
-          timestamp: Date.now(),
-          messages: messages
-        };
-      } else if (chatHistory[currentChatId]) {
-        chatHistory[currentChatId].messages = messages;
-      }
-
-      renderMessages();
-      saveData();
-      localStorage.setItem(`lastChatId_${currentRole}`, currentChatId);
-
-      // Clear input
-      input.value = "";
-
-      // Show typing
-      const typingDiv = document.createElement("div");
-      typingDiv.id = "typing-indicator";
-      typingDiv.className = "flex justify-start mt-6";
-      typingDiv.innerHTML = `
-        <div class="bot-bubble px-6 py-4">
-          <div class="typing">
-            <span></span><span></span><span></span>
-          </div>
+    const card = document.createElement("div");
+    card.className = "resource-card p-5 flex flex-col gap-3";
+    card.innerHTML = `
+      <div class="flex items-start justify-between gap-2">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:var(--cream);">
+          <i class="fa-solid ${r.icon} text-base" style="color:var(--teal);"></i>
         </div>
-      `;
-      document.getElementById("chat-container").appendChild(typingDiv);
+        <span class="resource-tag ${tagMap[r.tag]}">${tagLabel[r.tag]}</span>
+      </div>
+      <div>
+        <div class="font-semibold text-sm leading-snug mb-1" style="color:var(--navy);">${r.title}</div>
+        <div class="text-xs leading-relaxed" style="color:var(--text-muted);">${r.desc}</div>
+      </div>
+      <div class="flex gap-2 mt-auto pt-1">
+        <a href="${r.url}" target="_blank" class="flex-1 text-center text-xs py-2 rounded-xl font-medium transition" style="background:var(--cream); color:var(--navy);">
+          <i class="fa-solid fa-eye mr-1"></i>View
+        </a>
+        <a href="${r.url}" download class="flex-1 text-center text-xs py-2 rounded-xl font-medium transition" style="background:var(--cream); color:var(--navy);">
+          <i class="fa-solid fa-download mr-1"></i>Download
+        </a>
+        <button onclick="togglePin(${r.id})" class="flex-1 text-xs py-2 rounded-xl font-medium transition pin-btn-${r.id}"
+          style="background:${isPinned ? 'var(--gold)' : 'var(--cream)'}; color:${isPinned ? 'var(--navy)' : 'var(--teal)'};">
+          <i class="fa-solid fa-paperclip mr-1"></i>${isPinned ? 'Pinned' : 'Pin'}
+        </button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
 
-      try {
-const res = await fetch(`${BACKEND_URL}/chat`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    employee_id: localStorage.getItem("employee_id"),
-    role: localStorage.getItem("role"),
-    query: query,
-    session_id: null
-  })
-});
+function filterResources() { renderResources(); }
 
-        const data = await res.json();
+function filterByTag(tag) {
+  activeTagFilter = tag;
+  document.querySelectorAll('.resource-filter-btn').forEach(btn => {
+    btn.classList.toggle('active-filter', btn.dataset.tag === tag);
+  });
+  renderResources(tag);
+}
 
-        // Remove typing
-        typingDiv.remove();
+function togglePin(id) {
+  const idx = pinnedFiles.indexOf(id);
+  if (idx === -1) pinnedFiles.push(id); else pinnedFiles.splice(idx, 1);
+  updatePinBar(); renderResources();
+}
 
-        const botTime = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+function updatePinBar() {
+  const bar = document.getElementById("pin-bar");
+  const lbl = document.getElementById("pin-label");
+  if (!pinnedFiles.length) { bar.classList.add("hidden"); return; }
+  bar.classList.remove("hidden");
+  lbl.textContent = `${pinnedFiles.length} file${pinnedFiles.length > 1 ? 's' : ''} selected`;
+}
 
-        messages.push({
-  role: "assistant",
-  content: data.answer || "Sorry, I couldn't process that.",
-  time: botTime,
-  db_sources: data.db_sources || [],
-  internet_sources: data.web_sources || [], // FIXED
-  followups: data.followups || [],          // ADD THIS
-  message_id: data.message_id || null
-});
-        
-        if (chatHistory[currentChatId]) {
-          chatHistory[currentChatId].messages = messages;
-        }
+function clearPinned() { pinnedFiles = []; updatePinBar(); renderResources(); }
 
-        saveData();
-        renderMessages();
+function pinToChat() {
+  const names = pinnedFiles.map(id => RESOURCES.find(r => r.id === id)?.title).filter(Boolean);
+  const msg   = `📎 Attached resources:\n${names.map(n => `• ${n}`).join('\n')}`;
+  clearPinned();
+  switchTab("chat");
+  showToast(`✅ ${names.length} file(s) noted in chat`);
+  // Pre-fill input so rep can ask about them
+  document.getElementById("user-input").value = `I want to discuss these files: ${names.join(", ")}`;
+  document.getElementById("user-input").focus();
+}
 
-      } catch (err) {
-        typingDiv.remove();
-        messages.push({
-          role: "assistant",
-          content: "Error connecting to server. Please try again.",
-          time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
-        });
-        renderMessages();
-      }
-    }
-
-    // Keyboard support - Enter to send
-    const inputField = document.getElementById("user-input");
-    inputField.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-    
-    // Initialize
+// ── Init ──────────────────────────────────────────────────────────────────────
 window.onload = () => {
   const employeeId = localStorage.getItem("employee_id");
   const role       = localStorage.getItem("role");
-
   if (employeeId) {
     document.getElementById("login-screen").classList.add("hidden");
     switchRole(role === "admin" ? "admin" : "rep");
-
-    const lastChatId = localStorage.getItem(`lastChatId_${role}`);
-    if (lastChatId && chatHistory[lastChatId]) {
-      loadChat(lastChatId);
-    }
-
+    const lastId = localStorage.getItem(`lastChatId_${role}`);
+    if (lastId && chatHistory[lastId]) loadChat(lastId);
     document.getElementById("sidebar").classList.remove("open");
   }
-
-  // ==================== TTS INIT ====================
-  let ttsEnabled = true;
- window.speakText = function(text, listenBtn, stopBtn) {
-  const cleanText = text.replace(/[*#_`]/g, '');
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance();
-  utterance.text = cleanText;
-  utterance.lang = 'en-US';
-  utterance.rate = 1.1;
-  utterance.onend = () => {
-    if (stopBtn) stopBtn.classList.add('hidden');
-    if (listenBtn) listenBtn.classList.remove('hidden');
-  };
-  window.speechSynthesis.speak(utterance);
+  switchTab("chat");
 };
-};
-  function useFollowup(text) {
-  const input = document.getElementById("user-input");
-  input.value = text;
-  sendMessage();
-}
-    // ==================== STT ====================
-const sttBtn = document.getElementById('stt-btn');
-let recognition;
 
-if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SpeechRecognition();
-  recognition.continuous = false;
-  recognition.interimResults = true;
-  recognition.lang = 'en-US';
-
-  recognition.onstart = () => {
-    sttBtn.classList.add('stt-listening');
-    document.getElementById('user-input').placeholder = "Listening...";
-  };
-
-  recognition.onresult = (event) => {
-    let finalTranscript = '';
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      if (event.results[i].isFinal) {
-        finalTranscript += event.results[i][0].transcript;
-      } else {
-        document.getElementById('user-input').value = event.results[i][0].transcript;
-      }
-    }
-    if (finalTranscript) document.getElementById('user-input').value = finalTranscript;
-  };
-
-  recognition.onend = () => {
-    sttBtn.classList.remove('stt-listening');
-    document.getElementById('user-input').placeholder = "Ask me anything about sales...";
-    if (document.getElementById('user-input').value.trim()) sendMessage();
-  };
-
-  recognition.onerror = (event) => {
-    console.error('STT error:', event.error);
-    sttBtn.classList.remove('stt-listening');
-    document.getElementById('user-input').placeholder = "Ask me anything about sales...";
-  };
-
-  sttBtn.addEventListener('click', () => {
-    sttBtn.classList.contains('stt-listening') ? recognition.stop() : recognition.start();
-  });
-
-} else {
-  if (sttBtn) sttBtn.style.display = 'none';
-}
-  </script>
+</script>
 </body>
 </html>
