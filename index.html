@@ -441,7 +441,36 @@ function formatText(text) {
     .replace(/_(.*?)_/g, '<em>$1</em>')
     .replace(/\n/g, '<br>');
 }
-        // Render Messages
+
+function renderAnswer(content) {
+  const words = content.split(' ');
+  if (words.length <= 50) return formatText(content);
+  
+  const preview = words.slice(0, 50).join(' ');
+  const rest    = words.slice(50).join(' ');
+  
+  return `
+    <span class="answer-preview">${formatText(preview)}...</span>
+    <span class="answer-full hidden">${formatText(content)}</span>
+    <button onclick="toggleReadMore(this)" 
+      class="text-blue-500 text-xs mt-2 block">
+      Read more ↓
+    </button>
+  `;
+}
+
+function toggleReadMore(btn) {
+  const bubble  = btn.parentElement;
+  const preview = bubble.querySelector('.answer-preview');
+  const full    = bubble.querySelector('.answer-full');
+  const isHidden = full.classList.contains('hidden');
+  
+  preview.classList.toggle('hidden', isHidden);
+  full.classList.toggle('hidden', !isHidden);
+  btn.textContent = isHidden ? 'Read less ↑' : 'Read more ↓';
+}
+    
+    // Render Messages
     function renderMessages() {
       const container = document.getElementById("chat-container");
       container.innerHTML = "";
@@ -453,7 +482,7 @@ function formatText(text) {
         div.innerHTML = `
           <div class="${msg.role === 'user' ? 'max-w-[45%] ml-auto' : 'max-w-[45%] mr-auto'}">
             <div class="message-bubble ${msg.role === "user" ? "user-bubble" : "bot-bubble"}">
-              ${msg.role === 'assistant' ? formatText(msg.content) : msg.content}
+            ${msg.role === 'assistant' ? renderAnswer(msg.content) : msg.content}
             </div>
 
 ${msg.role === "assistant" ? `
