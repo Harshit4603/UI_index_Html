@@ -101,6 +101,24 @@
       from { transform: translate(-50%, 20px); opacity: 0; }
       to { transform: translate(-50%, 0); opacity: 1; }
     }
+    /* STT Button - Listening State */
+.stt-listening {
+  background: #ef4444 !important;
+  color: white !important;
+  animation: pulse-red 1.5s infinite;
+}
+
+@keyframes pulse-red {
+  0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70%  { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* TTS Button - Active State */
+.tts-active {
+  color: #06b6d4 !important;
+  background: #ecfeff !important;
+}
 </style>
 </head>
 <body class="min-h-screen">
@@ -229,6 +247,20 @@
               <i class="fa-solid fa-plus text-lg"></i>
             </button>
 
+<!-- STT Button -->
+<button id="stt-btn"
+  class="flex-shrink-0 bg-white border border-gray-300 hover:border-blue-500 text-gray-500 w-12 h-12 rounded-2xl flex items-center justify-center transition shadow-sm mb-1"
+  title="Voice Input">
+  <i class="fa-solid fa-microphone text-lg"></i>
+</button>
+
+<!-- TTS Toggle Button -->
+<button id="tts-btn"
+  class="flex-shrink-0 bg-white border border-gray-300 hover:border-blue-500 text-gray-500 w-12 h-12 rounded-2xl flex items-center justify-center transition shadow-sm mb-1"
+  title="Toggle Voice Output">
+  <i class="fa-solid fa-volume-high text-lg"></i>
+</button>
+            
             <div class="relative flex-1">
               <textarea id="user-input" rows="1"
                 class="w-full resize-none rounded-3xl border border-gray-300 focus:border-blue-500 focus:ring-0 px-7 py-5 pr-16 text-base shadow-sm"
@@ -762,6 +794,7 @@ const res = await fetch(`${BACKEND_URL}/chat`, {
   followups: data.followups || [],          // ADD THIS
   message_id: data.message_id || null
 });
+        speakText(data.answer || "");
         if (chatHistory[currentChatId]) {
           chatHistory[currentChatId].messages = messages;
         }
@@ -812,6 +845,74 @@ window.onload = () => {
   const input = document.getElementById("user-input");
   input.value = text;
   sendMessage();
+}
+    // ==================== STT ====================
+const sttBtn = document.getElementById('stt-btn');
+let recognition;
+
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  recognition.onstart = () => {
+    sttBtn.classList.add('stt-listening');
+    document.getElementById('user-input').placeholder = "Listening...";
+  };
+
+  recognition.onresult = (event) => {
+    let finalTranscript = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      if (event.results[i].isFinal) {
+        finalTranscript += event.results[i][0].transcript;
+      } else {
+        document.getElementById('user-input').value = event.results[i][0].transcript;
+      }
+    }
+    if (finalTranscript) document.getElementById('user-input').value = finalTranscript;
+  };
+
+  recognition.onend = () => {
+    sttBtn.classList.remove('stt-listening');
+    document.getElementById('user-input').placeholder = "Ask me anything about sales...";
+    if (document.getElementById('user-input').value.trim()) sendMessage();
+  };
+
+  recognition.onerror = (event) => {
+    console.error('STT error:', event.error);
+    sttBtn.classList.remove('stt-listening');
+    document.getElementById('user-input').placeholder = "Ask me anything about sales...";
+  };
+
+  sttBtn.addEventListener('click', () => {
+    sttBtn.classList.contains('stt-listening') ? recognition.stop() : recognition.start();
+  });
+
+} else {
+  if (sttBtn) sttBtn.style.display = 'none';
+}
+
+// ==================== TTS ====================
+const ttsBtn = document.getElementById('tts-btn');
+let ttsEnabled = false;
+let utterance = new SpeechSynthesisUtterance();
+
+ttsBtn.addEventListener('click', () => {
+  ttsEnabled = !ttsEnabled;
+  ttsBtn.classList.toggle('tts-active', ttsEnabled);
+  if (!ttsEnabled) window.speechSynthesis.cancel();
+});
+
+function speakText(text) {
+  if (!ttsEnabled) return;
+  const cleanText = text.replace(/[*#_`]/g, '');
+  window.speechSynthesis.cancel();
+  utterance.text = cleanText;
+  utterance.lang = 'en-US';
+  utterance.rate = 1.1;
+  window.speechSynthesis.speak(utterance);
 }
   </script>
 </body>
