@@ -90,19 +90,31 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
 .ni-label{font-size:0.8rem;font-weight:500;color:rgba(255,255,255,0.4);transition:color 0.15s;}
 .nav-item.active .ni-label,.nav-item:hover .ni-label{color:rgba(255,255,255,0.85);}
 .sidebar-bottom{padding:14px 10px;border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0;}
+#app.sidebar-collapsed {
+  --sb-width: 64px;
+}
 #app.sidebar-collapsed .sidebar-brand-text,
 #app.sidebar-collapsed .ni-label,
 #app.sidebar-collapsed .ns-label,
 #app.sidebar-collapsed .st,
-#app.sidebar-collapsed .toggle-label{
-  display:none;
+#app.sidebar-collapsed .sb-status {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  pointer-events: none;
 }
-  #app.sidebar-collapsed .nav-item{
-  justify-content:center;
+#app.sidebar-collapsed .nav-item {
+  justify-content: center;
+  padding: 9px 0;
 }
-
-#app.sidebar-collapsed .ni-icon{
-  margin:0;
+#app.sidebar-collapsed .ni-icon {
+  margin: 0;
+}
+#app.sidebar-collapsed .sidebar-brand {
+  justify-content: center;
+}
+#app.sidebar-collapsed .sidebar-logo {
+  margin: 0;
 }
 .sb-toggle{width:100%;display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:8px;cursor:pointer;transition:all 0.15s;border:none;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.35);font-family:'Syne',sans-serif;font-size:0.78rem;white-space:nowrap;overflow:hidden;}
 .sb-toggle:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);}
@@ -541,14 +553,7 @@ let sbCollapsed = false;
 
 function toggleSidebar(){
   sbCollapsed = !sbCollapsed;
-
-  const app = document.getElementById("app");
-
-  app.classList.toggle("sidebar-collapsed", sbCollapsed);
-
-  // change icon like ChatGPT
-  document.getElementById("toggle-icon").className =
-    sbCollapsed ? "fa-solid fa-bars" : "fa-solid fa-bars";
+  document.getElementById("app").classList.toggle("sidebar-collapsed", sbCollapsed);
 }
 
 function switchRole(role){
