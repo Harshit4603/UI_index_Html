@@ -495,6 +495,27 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
   </div>
 </div>
 
+<div id="res-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="background:var(--white);border-radius:20px;width:90%;max-width:860px;height:85vh;display:flex;flex-direction:column;box-shadow:var(--shadow-xl);overflow:hidden;">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div>
+        <div id="modal-title" style="font-weight:700;font-size:0.95rem;color:var(--ink);"></div>
+        <div id="modal-tag" style="font-size:0.7rem;color:var(--muted);margin-top:2px;"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="shareResource()" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;background:var(--teal);color:var(--white);border:none;font-family:'Syne',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;">
+          <i class="fa-solid fa-share-nodes"></i> Share
+        </button>
+        <a id="modal-download" href="#" download style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;background:var(--ink);color:var(--white);text-decoration:none;font-family:'Syne',sans-serif;font-size:0.78rem;font-weight:600;">
+          <i class="fa-solid fa-download"></i> Download
+        </a>
+        <button onclick="closeModal()" style="width:34px;height:34px;border-radius:9px;border:1.5px solid var(--border-2);background:var(--white);color:var(--muted);cursor:pointer;font-size:1rem;">✕</button>
+      </div>
+    </div>
+    <iframe id="modal-iframe" src="" style="flex:1;border:none;width:100%;"></iframe>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"><span id="toast-text"></span></div>
 
@@ -770,7 +791,7 @@ function renderResources(){
     card.innerHTML=`<div class="rct"><div class="ri ri-${t}"><i class="fa-solid ${r.icon}"></i></div><span class="rtag rt-${t}">${TL[r.tag]}</span></div>
       <div><div class="rct2">${r.title}</div><div class="rcd">${r.desc}</div></div>
       <div class="rcf">
-        <a href="${r.url}" target="_blank" class="ra"><i class="fa-solid fa-eye"></i> View</a>
+        <button onclick="openResource(${r.id})" class="ra"><i class="fa-solid fa-eye"></i> View</button>
         <a href="${r.url}" download class="ra"><i class="fa-solid fa-download"></i> Save</a>
         <button onclick="togglePin(${r.id})" class="ra${pinned?" pinned":""}"><i class="fa-solid fa-paperclip"></i> ${pinned?"Pinned":"Pin"}</button>
       </div>`;
@@ -789,6 +810,38 @@ function pinToChat(){
   document.getElementById("user-input").focus();
 }
 
+let currentModalResource = null;
+
+function openResource(id){
+  const r = RESOURCES.find(x=>x.id===id);
+  if(!r) return;
+  currentModalResource = r;
+  document.getElementById("modal-title").textContent = r.title;
+  document.getElementById("modal-tag").textContent = r.desc;
+  document.getElementById("modal-iframe").src = r.url;
+  const modal = document.getElementById("res-modal");
+  modal.style.display = "flex";
+}
+
+function closeModal(){
+  document.getElementById("res-modal").style.display = "none";
+  document.getElementById("modal-iframe").src = "";
+}
+
+function shareResource(){
+  const r = currentModalResource;
+  if(!r) return;
+  if(navigator.share){
+    navigator.share({title:r.title, text:r.desc, url:window.location.origin+r.url});
+  } else {
+    navigator.clipboard.writeText(window.location.origin+r.url).then(()=>toast("🔗 Link copied!"));
+  }
+}
+
+document.addEventListener("click", e=>{
+  if(e.target.id==="res-modal") closeModal();
+});
+  
 let toastTimer;
 function toast(msg){const el=document.getElementById("toast");document.getElementById("toast-text").textContent=msg;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2600);}
 
