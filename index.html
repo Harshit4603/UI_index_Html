@@ -786,7 +786,6 @@ let toastTimer;
 function toast(msg){const el=document.getElementById("toast");document.getElementById("toast-text").textContent=msg;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2600);}
 
 window.onload=()=>{
-  document.getElementById("sidebar-open-btn").style.display = "none";
   const empId=localStorage.getItem("employee_id");const role=localStorage.getItem("role");
   if(empId){document.getElementById("login-screen").style.display="none";document.getElementById("app").style.display="flex";switchRole(role==="admin"?"admin":"rep");}
   switchTab("chat");
