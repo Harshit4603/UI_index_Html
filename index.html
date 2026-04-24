@@ -60,7 +60,7 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
 
 /* SIDEBAR */
 .sidebar{
-  width:256px;
+  width:100%;
   height:100%;
   background:var(--ink);
   display:flex;
@@ -68,6 +68,11 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
   overflow:hidden;
   transition: width 0.3s ease;
   min-width:0;
+}
+
+  #app.sidebar-collapsed .sidebar{
+  width:0;
+  overflow:hidden;
 }
 
 .sidebar-top{padding:22px 18px 0;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;}
@@ -558,6 +563,9 @@ function toggleSidebar(){
 
   // show floating button only when closed
   openBtn.style.display = sbCollapsed ? "flex" : "none";
+
+  document.getElementById("toggle-icon").className =
+  sbCollapsed ? "fa-solid fa-angles-right" : "fa-solid fa-angles-left";
 }
 
 function switchRole(role){
@@ -709,7 +717,15 @@ function setupSTT(){
   rec.continuous=false;rec.interimResults=true;rec.lang='en-IN';
   rec.onstart=()=>{btn.classList.add("listening");document.getElementById("user-input").placeholder="Listening…";};
   rec.onresult=e=>{let f='';for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)f+=e.results[i][0].transcript;else document.getElementById("user-input").value=e.results[i][0].transcript;}if(f)document.getElementById("user-input").value=f;};
-  rec.onend=()=>{btn.classList.remove("listening");document.getElementById("user-input").placeholder="Ask about SmartGRID, pricing, objections, or strategies…";if(document.getElementById("user-input").value.trim())sendMessage();};
+  rec.onend = () => {
+  btn.classList.remove("listening");
+
+  const input = document.getElementById("user-input");
+  input.placeholder = "Ask about SmartGRID, pricing, objections, or strategies…";
+
+  // 👇 focus so user can edit immediately
+  input.focus();
+};
   rec.onerror=()=>{btn.classList.remove("listening");};
   btn.addEventListener("click",()=>btn.classList.contains("listening")?rec.stop():rec.start());
 }
