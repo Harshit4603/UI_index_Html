@@ -623,11 +623,14 @@ function renderAnswer(content){
   return `<span class="answer-preview">${fmt(preview)}…</span><span class="answer-full" style="display:none;">${fmt(content)}</span><button onclick="toggleRead(this)" style="background:none;border:none;cursor:pointer;font-size:0.72rem;color:var(--teal);margin-top:6px;display:block;font-family:Syne,sans-serif;font-weight:600;">Read more ↓</button>`;
 }
 function toggleRead(btn){
-  const p=btn.parentElement;const pr=p.querySelector('.answer-preview');const fu=p.querySelector('.answer-full');
-  const h=fu.style.display==='none';pr.style.display=h?'none':'';fu.style.display=h?'':'none';
-  btn.textContent=h?'Read less ↑':'Read more ↓';
+  const p=btn.parentElement;
+  const pr=p.querySelector('.answer-preview');
+  const fu=p.querySelector('.answer-full');
+  const expanding=fu.style.display==='none';
+  pr.style.display=expanding?'none':'inline';
+  fu.style.display=expanding?'inline':'none';
+  btn.textContent=expanding?'Read less ↑':'Read more ↓';
 }
-
 function renderMessages(){
   const container=document.getElementById("chat-container");container.innerHTML="";
   if(!messages.length){
@@ -732,6 +735,7 @@ async function sendMessage(){
   try{
     const res=await fetch(`${BACKEND_URL}/chat`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({employee_id:localStorage.getItem("employee_id"),role:localStorage.getItem("role"),query,session_id:null})});
     const data=await res.json();
+    console.log("API response:", data);
     document.getElementById("typing")?.remove();
     const bTime=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
     messages.push({role:"assistant",content:data.answer||"Sorry, I couldn't process that.",time:bTime,db_sources:data.db_sources||[],internet_sources:data.web_sources||[],followups:data.followups||[],message_id:data.message_id||null});
