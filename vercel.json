@@ -13,3 +13,11 @@
     }
   ]
 }
+
+{
+  "outputDirectory": ".",
+  "routes": [
+    { "src": "/product-catalogue.pdf", "dest": "/product-catalogue.pdf" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
