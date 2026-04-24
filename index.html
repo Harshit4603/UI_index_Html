@@ -775,7 +775,7 @@ function renderMessages() {
           ${msg.followups?.length ? `
             <div class="mt-3 flex flex-wrap gap-2">
               ${msg.followups.map(q => `
-                <button onclick="useFollowup('${q.replace(/'/g,"\\'")}'))" class="followup-chip">${q}</button>`).join('')}
+                <button onclick="useFollowup('${q.replace(/'/g,"\\'")}')" class="followup-chip">${q}</button>`).join('')}
             </div>` : ''}
         ` : ''}
 
