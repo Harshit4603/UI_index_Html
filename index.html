@@ -792,6 +792,8 @@ window.onload=()=>{
   const empId=localStorage.getItem("employee_id");const role=localStorage.getItem("role");
   if(empId){document.getElementById("login-screen").style.display="none";document.getElementById("app").style.display="flex";switchRole(role==="admin"?"admin":"rep");}
   switchTab("chat");
+  sbCollapsed = true;
+  document.getElementById("app").classList.add("sidebar-collapsed");
 };
 </script>
 </body>
