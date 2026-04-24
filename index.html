@@ -53,8 +53,19 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
 #app{display:flex;height:100vh;overflow:hidden;}
 
 /* SIDEBAR */
-.sidebar{width:256px;background:var(--ink);display:flex;flex-direction:column;flex-shrink:0;transition:width 0.3s cubic-bezier(0.4,0,0.2,1);overflow:hidden;}
-.sidebar.collapsed{width:66px;}
+.sidebar{
+  width:256px;
+  background:var(--ink);
+  display:flex;
+  flex-direction:column;
+  flex-shrink:0;
+  transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  position:relative;
+  z-index:100;
+}
+.sidebar.collapsed{
+  transform: translateX(-100%);
+}
 .sidebar-top{padding:22px 18px 0;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;}
 .sidebar-brand{display:flex;align-items:center;gap:11px;margin-bottom:20px;white-space:nowrap;overflow:hidden;}
 .sidebar-logo{width:36px;height:36px;flex-shrink:0;background:rgba(184,134,42,0.15);border:1px solid rgba(184,134,42,0.25);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--gold-2);}
@@ -235,9 +246,36 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
 @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
 
 @media(max-width:768px){.sidebar{display:none;}.starter-grid{grid-template-columns:1fr;}.topbar{padding:0 14px;}.chat-area{padding:18px 14px;}.input-bar{padding:10px 14px 14px;}}
+
+  #sidebar-open-btn{
+  position:fixed;
+  top:16px;
+  left:16px;
+  width:40px;
+  height:40px;
+  border-radius:10px;
+  background:var(--ink);
+  color:var(--white);
+  border:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:200;
+  box-shadow:var(--shadow-md);
+}
+
+#sidebar-open-btn:hover{
+  background:var(--teal);
+}
+  
 </style>
 </head>
 <body>
+
+  <button id="sidebar-open-btn" onclick="toggleSidebar()">
+  <i class="fa-solid fa-bars"></i>
+</button>
 
 <!-- LOGIN -->
 <div id="login-screen">
@@ -447,13 +485,18 @@ document.addEventListener("DOMContentLoaded",()=>{
   document.getElementById("user-input").addEventListener("input",function(){this.style.height="auto";this.style.height=Math.min(this.scrollHeight,130)+"px";});
   setupSTT();
 });
+let sbCollapsed = false;
 
-let sbCollapsed=false;
 function toggleSidebar(){
-  sbCollapsed=!sbCollapsed;
-  document.getElementById("sidebar").classList.toggle("collapsed",sbCollapsed);
-  document.querySelector(".toggle-label").textContent=sbCollapsed?"Expand":"Collapse";
-  document.getElementById("toggle-icon").className=sbCollapsed?"fa-solid fa-angles-right":"fa-solid fa-angles-left";
+  sbCollapsed = !sbCollapsed;
+
+  const sidebar = document.getElementById("sidebar");
+  const openBtn = document.getElementById("sidebar-open-btn");
+
+  sidebar.classList.toggle("collapsed", sbCollapsed);
+
+  // Show button only when sidebar is closed
+  openBtn.style.display = sbCollapsed ? "flex" : "none";
 }
 
 function switchRole(role){
@@ -683,6 +726,7 @@ let toastTimer;
 function toast(msg){const el=document.getElementById("toast");document.getElementById("toast-text").textContent=msg;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2600);}
 
 window.onload=()=>{
+  document.getElementById("sidebar-open-btn").style.display = "none";
   const empId=localStorage.getItem("employee_id");const role=localStorage.getItem("role");
   if(empId){document.getElementById("login-screen").style.display="none";document.getElementById("app").style.display="flex";switchRole(role==="admin"?"admin":"rep");}
   switchTab("chat");
