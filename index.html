@@ -52,7 +52,8 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
 /* APP */
 #app{
   display:grid;
-  grid-template-columns: 256px 1fr;
+  grid-template-columns: var(--sb-width,256px) 1fr;
+  transition: grid-template-columns 0.3s ease;
   height:100vh;
   overflow:hidden;
   transition: grid-template-columns 0.3s ease;
@@ -60,7 +61,7 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
 
 /* SIDEBAR */
 .sidebar{
-  width:20%;
+  width:var(--sb-width,256px);
   height:100%;
   background:var(--ink);
   display:flex;
@@ -68,11 +69,6 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
   overflow:hidden;
   transition: width 0.3s ease;
   min-width:0;
-}
-
-  #app.sidebar-collapsed .sidebar{
-  width:0;
-  overflow:hidden;
 }
 
 .sidebar-top{padding:22px 18px 0;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;}
@@ -94,6 +90,20 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
 .ni-label{font-size:0.8rem;font-weight:500;color:rgba(255,255,255,0.4);transition:color 0.15s;}
 .nav-item.active .ni-label,.nav-item:hover .ni-label{color:rgba(255,255,255,0.85);}
 .sidebar-bottom{padding:14px 10px;border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0;}
+#app.sidebar-collapsed .sidebar-brand-text,
+#app.sidebar-collapsed .ni-label,
+#app.sidebar-collapsed .ns-label,
+#app.sidebar-collapsed .st,
+#app.sidebar-collapsed .toggle-label{
+  display:none;
+}
+  #app.sidebar-collapsed .nav-item{
+  justify-content:center;
+}
+
+#app.sidebar-collapsed .ni-icon{
+  margin:0;
+}
 .sb-toggle{width:100%;display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:8px;cursor:pointer;transition:all 0.15s;border:none;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.35);font-family:'Syne',sans-serif;font-size:0.78rem;white-space:nowrap;overflow:hidden;}
 .sb-toggle:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);}
 .sb-toggle i{font-size:0.8rem;flex-shrink:0;width:16px;text-align:center;}
@@ -256,24 +266,6 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
 
 @media(max-width:768px){.sidebar{display:none;}.starter-grid{grid-template-columns:1fr;}.topbar{padding:0 14px;}.chat-area{padding:18px 14px;}.input-bar{padding:10px 14px 14px;}}
 
-  #sidebar-open-btn{
-  position:fixed;
-  top:16px;
-  left:16px;
-  width:40px;
-  height:40px;
-  border-radius:10px;
-  background:var(--ink);
-  color:var(--white);
-  border:none;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  z-index:200;
-  box-shadow:var(--shadow-md);
-}
-
 #sidebar-open-btn:hover{
   background:var(--teal);
 }
@@ -331,16 +323,12 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
   50%{ transform: translateY(-3px); }
 }
   #app.sidebar-collapsed{
-  grid-template-columns: 0px 1fr;
+  --sb-width: 72px;
 }
   
 </style>
 </head>
 <body>
-
-  <button id="sidebar-open-btn" onclick="toggleSidebar()">
-  <i class="fa-solid fa-bars"></i>
-</button>
 
 <!-- LOGIN -->
 <div id="login-screen">
@@ -396,12 +384,6 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
       </div>
       <div id="chat-history"></div>
     </div>
-    <div class="sidebar-bottom">
-      <button class="sb-toggle" onclick="toggleSidebar()">
-        <i class="fa-solid fa-angles-left" id="toggle-icon"></i>
-        <span class="toggle-label">Collapse</span>
-      </button>
-    </div>
   </div>
 
   <!-- MAIN -->
@@ -409,11 +391,15 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
     <!-- TOPBAR -->
     <div class="topbar">
       <div class="topbar-left">
-        <div class="page-info">
-          <div class="pt" id="page-title">AI Assistant</div>
-          <div class="ps" id="page-subtitle">Ask about products, pricing, or sales strategies</div>
-        </div>
-      </div>
+  <button id="sidebar-toggle-btn" onclick="toggleSidebar()" class="icon-btn">
+    <i class="fa-solid fa-bars" id="toggle-icon"></i>
+  </button>
+
+  <div class="page-info">
+    <div class="pt" id="page-title">AI Assistant</div>
+    <div class="ps" id="page-subtitle">Ask about products, pricing, or sales strategies</div>
+  </div>
+</div>
       <div class="topbar-tabs">
         <button class="tab-btn active" id="tab-chat" onclick="switchTab('chat')">
           <i class="fa-solid fa-message" style="font-size:0.72rem;"></i> Chat
@@ -557,15 +543,12 @@ function toggleSidebar(){
   sbCollapsed = !sbCollapsed;
 
   const app = document.getElementById("app");
-  const openBtn = document.getElementById("sidebar-open-btn");
 
   app.classList.toggle("sidebar-collapsed", sbCollapsed);
 
-  // show floating button only when closed
-  openBtn.style.display = sbCollapsed ? "flex" : "none";
-
+  // change icon like ChatGPT
   document.getElementById("toggle-icon").className =
-  sbCollapsed ? "fa-solid fa-angles-right" : "fa-solid fa-angles-left";
+    sbCollapsed ? "fa-solid fa-bars" : "fa-solid fa-bars";
 }
 
 function switchRole(role){
