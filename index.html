@@ -50,22 +50,26 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
 .login-footer{text-align:center;font-size:0.72rem;color:var(--muted-2);margin-top:24px;}
 
 /* APP */
-#app{display:flex;height:100vh;overflow:hidden;}
+#app{
+  display:grid;
+  grid-template-columns: 256px 1fr;
+  height:100vh;
+  overflow:hidden;
+  transition: grid-template-columns 0.3s ease;
+}
 
 /* SIDEBAR */
 .sidebar{
   width:256px;
+  height:100%;
   background:var(--ink);
   display:flex;
   flex-direction:column;
-  flex-shrink:0;
-  transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
-  position:relative;
-  z-index:100;
+  overflow:hidden;
+  transition: width 0.3s ease;
+  min-width:0;
 }
-.sidebar.collapsed{
-  transform: translateX(-100%);
-}
+
 .sidebar-top{padding:22px 18px 0;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;}
 .sidebar-brand{display:flex;align-items:center;gap:11px;margin-bottom:20px;white-space:nowrap;overflow:hidden;}
 .sidebar-logo{width:36px;height:36px;flex-shrink:0;background:rgba(184,134,42,0.15);border:1px solid rgba(184,134,42,0.25);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--gold-2);}
@@ -268,6 +272,62 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
 #sidebar-open-btn:hover{
   background:var(--teal);
 }
+  /* STT Button Animation */
+#stt-btn{
+  position:relative;
+  transition:all 0.2s ease;
+}
+
+/* Hover micro interaction */
+#stt-btn:hover{
+  transform:scale(1.08);
+}
+
+/* Listening state */
+#stt-btn.listening{
+  background:#FEE2E2;
+  border-color:#FCA5A5;
+  color:#DC2626;
+  animation:micPulse 1.4s infinite;
+}
+
+/* Pulse ring effect */
+#stt-btn.listening::after{
+  content:'';
+  position:absolute;
+  inset:-6px;
+  border-radius:12px;
+  border:2px solid rgba(220,38,38,0.4);
+  animation:ring 1.4s infinite;
+}
+
+/* Keyframes */
+@keyframes micPulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.12);}
+  100%{transform:scale(1);}
+}
+
+@keyframes ring{
+  0%{opacity:0.7;transform:scale(1);}
+  100%{opacity:0;transform:scale(1.6);}
+}
+  .mic-icon{
+  transition: transform 0.2s ease;
+}
+
+/* Animate only when listening */
+#stt-btn.listening .mic-icon{
+  animation: micBounce 0.8s ease-in-out infinite;
+}
+
+@keyframes micBounce{
+  0%,100%{ transform: translateY(0); }
+  50%{ transform: translateY(-3px); }
+}
+  #app.sidebar-collapsed{
+  grid-template-columns: 0px 1fr;
+}
   
 </style>
 </head>
@@ -384,7 +444,7 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
               <i class="fa-solid fa-paperclip"></i>
             </button>
             <button id="stt-btn" class="icon-btn" title="Voice Input">
-  <i class="fa-solid fa-microphone"></i>
+  <i class="fa-solid fa-microphone mic-icon"></i>
 </button>
             <div class="input-wrap">
               <textarea id="user-input" rows="1" placeholder="Ask about SmartGRID, pricing, objections, or strategies…"></textarea>
@@ -491,12 +551,12 @@ let sbCollapsed = false;
 function toggleSidebar(){
   sbCollapsed = !sbCollapsed;
 
-  const sidebar = document.getElementById("sidebar");
+  const app = document.getElementById("app");
   const openBtn = document.getElementById("sidebar-open-btn");
 
-  sidebar.classList.toggle("collapsed", sbCollapsed);
+  app.classList.toggle("sidebar-collapsed", sbCollapsed);
 
-  // Show button only when sidebar is closed
+  // show floating button only when closed
   openBtn.style.display = sbCollapsed ? "flex" : "none";
 }
 
