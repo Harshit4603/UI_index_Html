@@ -163,7 +163,7 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
 /* INPUT */
 .input-bar{background:var(--white);border-top:1px solid var(--border);padding:14px 20px 18px;flex-shrink:0;}
 .input-inner{max-width:780px;margin:0 auto;}
-.input-row{display:flex;align-items:flex-end;gap:8px;}
+.input-row{display:flex;align-items:flex-end;gap:10px;}
 .input-wrap{flex:1;position:relative;background:var(--surface);border:1.5px solid var(--border-2);border-radius:18px;transition:border-color 0.2s,box-shadow 0.2s;display:flex;align-items:flex-end;}
 .input-wrap:focus-within{border-color:var(--teal-2);box-shadow:0 0 0 3px var(--teal-glow);background:var(--white);}
 #user-input{flex:1;resize:none;border:none;outline:none;background:transparent;font-family:'Syne',sans-serif;font-size:0.87rem;color:var(--ink);padding:13px 15px 13px;max-height:130px;line-height:1.5;}
@@ -366,9 +366,7 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
             <i class="fa-solid fa-shield" style="font-size:0.68rem;"></i> Admin
           </button>
         </div>
-        <button class="topbar-btn" id="stt-btn" title="Voice Input">
-          <i class="fa-solid fa-microphone"></i>
-        </button>
+    
         <button class="new-chat-btn" onclick="newChat()">
           <i class="fa-solid fa-plus" style="font-size:0.72rem;"></i> New Chat
         </button>
@@ -385,6 +383,9 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
             <button id="chat-upload-btn" class="icon-btn" style="display:none;" onclick="document.getElementById('chat-upload-input').click()" title="Upload Document">
               <i class="fa-solid fa-paperclip"></i>
             </button>
+            <button id="stt-btn" class="icon-btn" title="Voice Input">
+  <i class="fa-solid fa-microphone"></i>
+</button>
             <div class="input-wrap">
               <textarea id="user-input" rows="1" placeholder="Ask about SmartGRID, pricing, objections, or strategies…"></textarea>
               <button class="send-btn" onclick="sendMessage()">
