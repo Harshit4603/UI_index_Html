@@ -688,7 +688,7 @@ function renderMessages(){
             <button class="action-btn" onclick="copyMsg(${i})">
               <i class="fa-solid fa-copy" style="font-size:0.7rem;"></i> Copy
             </button>
-            <button class="action-btn bookmark-btn ${msg.is_saved?'saved':''}" onclick="toggleSave('${msg.id}',this)">
+            <button class="action-btn bookmark-btn ${msg.is_saved?'saved':''}" onclick="toggleSave('${msg.message_id}',this)">
   <i class="fa-solid fa-bookmark" style="font-size:0.7rem;"></i> ${msg.is_saved?'Saved':'Save'}
 </button>
           </div>
