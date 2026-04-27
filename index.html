@@ -620,14 +620,7 @@ function switchSidebarTab(tab) {
   document.getElementById('saved-list').style.display = isHistory ? 'none' : 'block';
   document.getElementById('tab-history').classList.toggle('active', isHistory);
   document.getElementById('tab-saved').classList.toggle('active', !isHistory);
-  if (!isHistory) {
-    document.getElementById('saved-panel').style.display = 'flex';
-    document.getElementById('chat-panel').style.display = 'none';
-    document.getElementById('resources-panel').classList.remove('show');
-    loadSavedMessages();
-  } else {
-    document.getElementById('saved-panel').style.display = 'none';
-  }
+  if (!isHistory) loadSavedMessages();
 }
   
 async function loadSavedMessages() {
@@ -670,6 +663,14 @@ async function loadSavedMessages() {
 function openSavedModal() {
   document.getElementById('saved-modal').style.display = 'block';
 }
+
+function filterSaved(query) {
+  const cards = document.querySelectorAll('#saved-modal-content > div');
+  cards.forEach(card => {
+    const text = card.innerText.toLowerCase();
+    card.style.display = text.includes(query.toLowerCase()) ? 'block' : 'none';
+  });
+}  
 
 function switchRole(role){
   currentRole=role;
@@ -972,6 +973,9 @@ window.onload=()=>{
       <div style="font-size:0.95rem;font-weight:600;color:var(--white);">🔖 Saved Messages</div>
       <button onclick="document.getElementById('saved-modal').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:1.2rem;cursor:pointer;">✕</button>
     </div>
+    <input id="saved-search" type="text" placeholder="Search saved messages..." 
+  oninput="filterSaved(this.value)"
+  style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:white;font-size:0.82rem;margin-bottom:16px;outline:none;box-sizing:border-box;">
     <div id="saved-modal-content" style="padding:16px 20px;"></div>
   </div>
 </div>
