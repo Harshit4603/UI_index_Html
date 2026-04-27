@@ -413,8 +413,8 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
   <!-- Expanded: tabs + content -->
   <div class="expanded-content">
     <div class="sidebar-tabs">
-      <button class="stab active" id="tab-history" onclick="switchTab('history')">History</button>
-      <button class="stab" id="tab-saved" onclick="switchTab('saved')">Saved</button>
+      <button class="stab active" id="tab-history" onclick="switchSidebarTab('history')">History</button>
+      <button class="stab" id="tab-saved" onclick="switchSidebarTab('saved')">Saved</button>
     </div>
     <div id="admin-clear-wrap" style="display:none;">
       <button class="admin-clear" onclick="clearAllChats()"><i class="fa-solid fa-trash fa-xs" style="margin-right:7px;"></i>Clear All Chats</button>
@@ -609,10 +609,10 @@ function expandToTab(tab) {
   sbCollapsed = false;
   document.getElementById('app').classList.remove('sidebar-collapsed');
   localStorage.setItem('sb', 'false');
-  switchTab(tab);
+  switchSidebarTab(tab);
 }
 
-function switchTab(tab) {
+function switchSidebarTab(tab) {
   const isHistory = tab === 'history';
   const chatHistory = document.getElementById('chat-history');
   const savedList = document.getElementById('saved-list');
