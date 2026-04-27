@@ -614,10 +614,20 @@ function expandToTab(tab) {
 
 function switchTab(tab) {
   const isHistory = tab === 'history';
-  document.getElementById('chat-history').style.display = isHistory ? 'block' : 'none';
-  document.getElementById('saved-list').style.display = isHistory ? 'none' : 'block';
-  document.getElementById('tab-history').classList.toggle('active', isHistory);
-  document.getElementById('tab-saved').classList.toggle('active', !isHistory);
+  const chatHistory = document.getElementById('chat-history');
+  const savedList = document.getElementById('saved-list');
+  const tabHistory = document.getElementById('tab-history');
+  const tabSaved = document.getElementById('tab-saved');
+
+  if (!chatHistory || !savedList || !tabHistory || !tabSaved) {
+    console.error('Sidebar tab elements not found in DOM');
+    return;
+  }
+
+  chatHistory.style.display = isHistory ? 'block' : 'none';
+  savedList.style.display = isHistory ? 'none' : 'block';
+  tabHistory.classList.toggle('active', isHistory);
+  tabSaved.classList.toggle('active', !isHistory);
   if (!isHistory) loadSavedMessages();
 }
 
