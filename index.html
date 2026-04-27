@@ -335,6 +335,10 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
   0%,100%{ transform: translateY(0); }
   50%{ transform: translateY(-3px); }
 }
+.bookmark-btn.saved {
+  color: var(--accent, #f59e0b);
+  opacity: 1;
+}
   
 </style>
 </head>
@@ -684,6 +688,9 @@ function renderMessages(){
             <button class="action-btn" onclick="copyMsg(${i})">
               <i class="fa-solid fa-copy" style="font-size:0.7rem;"></i> Copy
             </button>
+            <button class="action-btn bookmark-btn ${msg.is_saved?'saved':''}" onclick="toggleSave('${msg.id}',this)">
+  <i class="fa-solid fa-bookmark" style="font-size:0.7rem;"></i> ${msg.is_saved?'Saved':'Save'}
+</button>
           </div>
           ${hasSrc?`<div class="sources-wrap">
             <button class="src-toggle" onclick="var sl=this.nextElementSibling;sl.style.display=sl.style.display==='flex'?'none':'flex';this.innerHTML=sl.style.display==='flex'?'<i class=\\'fa-solid fa-chevron-up\\'></i> Hide Sources':'<i class=\\'fa-solid fa-chevron-down\\'></i> View Sources'">
@@ -709,6 +716,18 @@ function renderMessages(){
 function useStarter(q){document.getElementById("user-input").value=q;sendMessage();}
 function useFollowup(q){document.getElementById("user-input").value=q;sendMessage();}
 function copyMsg(i){navigator.clipboard.writeText(messages[i].content).then(()=>toast("✓ Copied to clipboard"));}
+async function toggleSave(messageId, btn) {
+  const isSaved = btn.classList.contains('saved');
+  const res = await fetch(`/messages/${messageId}/save`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ saved: !isSaved })
+  });
+  if (res.ok) {
+    btn.classList.toggle('saved');
+    btn.innerHTML = `<i class="fa-solid fa-bookmark" style="font-size:0.7rem;"></i> ${isSaved ? 'Save' : 'Saved'}`;
+  }
+}
 async function rateMsg(i,r){const msg=messages[i];if(!msg.message_id)return;try{await fetch(`${BACKEND_URL}/chat/${msg.message_id}/rate`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({rating:r==="yes"?"thumbs_up":"thumbs_down"})});}catch{}}
 
 function startTTS(btn,text){
