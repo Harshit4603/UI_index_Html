@@ -642,7 +642,7 @@ async function loadSavedMessages() {
     <div style="margin-bottom:20px;padding:16px;border-radius:10px;border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.02);">
        <div style="font-size:0.65rem;color:rgba(255,255,255,0.35);margin-bottom:8px;">${new Date(m.timestamp).toLocaleString('en-IN')}</div>
       <div style="font-size:0.8rem;color:#e2c97e;margin-bottom:8px;">Q: ${m.query}</div>
-      <div style="font-size:0.82rem;color:rgba(255,255,255,0.85);line-height:1.6;">${m.answer}</div>
+      <div style="font-size:0.82rem;color:rgba(255,255,255,0.85);line-height:1.6;">${fmt(m.answer)}</div>
     </div>`).join('');
 
   if (!data.length) {
@@ -663,7 +663,7 @@ async function loadSavedMessages() {
     <div style="margin-bottom:20px;padding:16px;border-radius:10px;border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.02);">
       <div style="font-size:0.65rem;color:rgba(255,255,255,0.25);margin-bottom:8px;">${new Date(m.timestamp).toLocaleString('en-IN')}</div>
       <div style="font-size:0.8rem;color:var(--gold-2);margin-bottom:8px;">Q: ${m.query}</div>
-      <div style="font-size:0.82rem;color:rgba(255,255,255,0.75);line-height:1.6;">${m.answer}</div>
+      <div style="font-size:0.82rem;color:rgba(255,255,255,0.75);line-height:1.6;">${fmt(m.answer)}</div>
     </div>`).join('');
 }
 
