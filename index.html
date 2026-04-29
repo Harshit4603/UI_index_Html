@@ -723,8 +723,8 @@ function renderHistory(){
   });
 }
 
-function newChat(){localStorage.removeItem("session_id");currentChatId="c_"+Date.now();messages=[];focusedIndex=-1;renderMessages();renderHistory();}
-function loadChat(id){currentChatId=id;messages=chatHistory[id].messages||[];focusedIndex=messages.length-1;renderMessages();renderHistory();}
+function newChat(){localStorage.removeItem("session_id");localStorage.removeItem("active_chat_id");currentChatId="c_"+Date.now();messages=[];focusedIndex=-1;renderMessages();renderHistory();}
+function loadChat(id){currentChatId=id;messages=chatHistory[id].messages||[];focusedIndex=messages.length-1;localStorage.setItem("active_chat_id",id);renderMessages();renderHistory();}
 function deleteChat(id){if(!confirm("Delete this conversation?"))return;delete chatHistory[id];if(currentChatId===id)newChat();saveData();renderHistory();}
 function clearAllChats(){if(!confirm("Clear ALL conversations?"))return;chatHistory={};saveData();newChat();}
 
@@ -973,12 +973,9 @@ window.onload=()=>{
 }
   switchTab("chat");
 const savedSession = localStorage.getItem("session_id");
-if(savedSession && empId){
-  const lastChat = Object.values(chatHistory).sort((a,b)=>b.timestamp-a.timestamp)[0];
-  if(lastChat){
-    const lastId = Object.keys(chatHistory).find(k=>chatHistory[k]===lastChat);
-    loadChat(lastId);
-  }
+const activeChatId = localStorage.getItem("active_chat_id");
+if(savedSession && empId && activeChatId && chatHistory[activeChatId]){
+  loadChat(activeChatId);
 }
   sbCollapsed = true;
   document.getElementById("app").classList.add("sidebar-collapsed");
