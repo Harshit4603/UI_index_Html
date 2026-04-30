@@ -979,6 +979,9 @@ if(savedSession && empId && activeChatId && chatHistory[activeChatId]){
 }
   sbCollapsed = true;
   document.getElementById("app").classList.add("sidebar-collapsed");
+  setInterval(async () => {
+    try { await fetch(`${BACKEND_URL}/`); } catch {}
+  }, 10 * 60 * 1000);
 };
 </script>
 
