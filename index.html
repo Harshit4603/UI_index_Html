@@ -167,8 +167,8 @@ body{font-family:'Syne',sans-serif;background:var(--surface);color:var(--ink);mi
 .msg-meta{font-size:0.66rem;color:var(--muted-2);margin-bottom:4px;display:flex;align-items:center;gap:5px;}
 .msg-row.user-row .msg-meta{justify-content:flex-end;}
 .msg-bubble{display:inline-block;max-width:100%;padding:13px 17px;border-radius:14px;font-size:0.84rem;line-height:1.7;word-break:break-word;}
-.bot-bubble{background:var(--white);border:1px solid var(--border);border-radius:4px 14px 14px 14px;color:var(--ink);box-shadow:var(--shadow-sm);}
-.user-bubble{background:var(--ink);color:var(--white);border-radius:14px 14px 4px 14px;float:right;}
+.bot-bubble{background:var(--white);border:1px solid var(--border);border-radius:4px 14px 14px 14px;color:var(--ink);box-shadow:var(--shadow-sm);display:inline-block;max-width:85%;}
+.user-bubble{background:var(--ink);color:var(--white);border-radius:14px 14px 4px 14px;display:inline-block;max-width:85%;}
 .msg-row.user-row .msg-body{display:flex;flex-direction:column;align-items:flex-end;}
 .msg-actions{display:flex;align-items:center;gap:6px;margin-top:7px;flex-wrap:wrap;}
 .action-btn{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;font-size:0.68rem;font-weight:500;background:var(--surface-2);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all 0.15s;}
@@ -731,9 +731,10 @@ function clearAllChats(){if(!confirm("Clear ALL conversations?"))return;chatHist
 function fmt(text){
   return text
     .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,'<a href="$2" target="_blank" style="color:var(--teal-2);text-decoration:underline;">$1</a>')
-    .replace(/\*([\w].*?)\*/g,'• $1')
+    .replace(/^\* (.+)$/gm,'• $1')
+    .replace(/^- (.+)$/gm,'• $1')
     .replace(/_(.*?)_/g,'<em>$1</em>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,'<a href="$2" target="_blank" style="color:var(--teal-2);text-decoration:underline;">$1</a>')
     .replace(/\n/g,'<br>');
 }
 function renderAnswer(content){
