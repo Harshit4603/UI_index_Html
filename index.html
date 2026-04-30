@@ -733,9 +733,11 @@ function fmt(text){
     .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
     .replace(/^\* (.+)$/gm,'• $1')
     .replace(/^- (.+)$/gm,'• $1')
+    .replace(/^• (.+)$/gm,'• $1')
     .replace(/_(.*?)_/g,'<em>$1</em>')
     .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,'<a href="$2" target="_blank" style="color:var(--teal-2);text-decoration:underline;">$1</a>')
-    .replace(/\n/g,'<br>');
+    .replace(/\n/g,'<br>')
+    .replace(/(<br>){3,}/g,'<br><br>');
 }
 function renderAnswer(content){
   const words=content.split(' ');
