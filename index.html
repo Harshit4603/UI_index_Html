@@ -349,7 +349,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--surface);color:
 #app.sidebar-collapsed .collapsed-icons { display: block; }
 #app.sidebar-collapsed .expanded-content { display: none; }
 .sidebar-tabs { display: flex; gap: 6px; margin-bottom: 10px; padding: 0 4px; }
-.stab { flex: 1; padding: 6px; border-radius: 7px; border: none; background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4); font-size: 0.75rem; cursor: pointer; font-family: 'Syne', sans-serif; }
+.stab { flex: 1; padding: 6px; border-radius: 7px; border: none; background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4); font-size: 0.75rem; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; }
 .stab.active { background: rgba(184,134,42,0.15); color: var(--gold-2); }
 .saved-item { padding: 10px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 6px; font-size: 0.75rem; color: rgba(255,255,255,0.6); cursor: pointer; }
 .saved-item:hover { background: rgba(255,255,255,0.04); }
@@ -634,7 +634,9 @@ async function loadSavedMessages() {
   const data = await res.json();
   const el = document.getElementById('saved-list');
   const modalEl = document.getElementById('saved-modal-content');
-  document.getElementById('saved-panel-content').innerHTML = [...data]
+  const panelEl = document.getElementById('saved-panel-content');
+  if (!el || !modalEl || !panelEl) return;
+  panelEl.innerHTML = [...data]
   .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))
   .map(m => `
     <div style="margin-bottom:20px;padding:16px;border-radius:10px;border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.02);">
@@ -910,6 +912,13 @@ async function sendMessage(){
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
+    if (isStreaming) {
+        isStreaming=false;
+        input.disabled=false;sendBtn.disabled=false;
+        input.placeholder="Ask about SmartGRID, pricing, objections, or strategies…";
+      }
+      break;
+    }
 
     const lines = decoder.decode(value).split("\n");
     for (const line of lines) {
@@ -944,9 +953,10 @@ async function sendMessage(){
 
 } catch {
   isStreaming=false;
-  const sendBtn=document.querySelector(".send-btn");
-  input.disabled=false;sendBtn.disabled=false;
-  input.placeholder="Ask about SmartGRID, pricing, objections, or strategies…";
+  const sendBtnErr=document.querySelector(".send-btn");
+  const inputErr=document.getElementById("user-input");
+  inputErr.disabled=false;sendBtnErr.disabled=false;
+  inputErr.placeholder="Ask about SmartGRID, pricing, objections, or strategies…";
   document.getElementById("typing")?.remove();
   messages.push({ role: "assistant", content: "⚠️ Error connecting to server. Please try again.", time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) });
   renderMessages();
