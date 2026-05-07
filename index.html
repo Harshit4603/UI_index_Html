@@ -909,10 +909,10 @@ async function sendMessage(){
   const decoder = new TextDecoder();
   const lastIdx = messages.length - 1;
 
-  while (true) {
+while (true) {
     const { done, value } = await reader.read();
-    if (done) break;
-    if (isStreaming) {
+    if (done) {
+      if (isStreaming) {
         isStreaming=false;
         input.disabled=false;sendBtn.disabled=false;
         input.placeholder="Ask about SmartGRID, pricing, objections, or strategies…";
@@ -921,6 +921,7 @@ async function sendMessage(){
     }
 
     const lines = decoder.decode(value).split("\n");
+  
     for (const line of lines) {
       if (!line.startsWith("data: ")) continue;
       try {
