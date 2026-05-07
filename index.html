@@ -911,7 +911,7 @@ async function sendMessage(){
           // Append token and re-render just the bubble
           messages[lastIdx].content += data.content;
           const bubble = document.querySelector(`#msg-${lastIdx} .msg-bubble`);
-          if (bubble) bubble.innerHTML = formatMsg(messages[lastIdx].content);
+          if (bubble) bubble.innerHTML = fmt(messages[lastIdx].content);
 
         } else if (data.type === "done") {
           // Finalise message with sources, followups etc.
@@ -932,6 +932,7 @@ async function sendMessage(){
   document.getElementById("typing")?.remove();
   messages.push({ role: "assistant", content: "⚠️ Error connecting to server. Please try again.", time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) });
   renderMessages();
+}
 }
 
 function handleFileSelect(input){const f=input.files[0];if(!f)return;document.getElementById("upload-label").textContent=f.name;document.getElementById("upload-status").classList.add("show");}
