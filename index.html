@@ -600,7 +600,12 @@ async function handleLogin(){
 
 document.addEventListener("DOMContentLoaded",()=>{
   document.getElementById("login-password").addEventListener("keydown",e=>{if(e.key==="Enter")handleLogin();});
-  document.getElementById("user-input").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();}});
+document.getElementById("user-input").addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    if (!isStreaming) sendMessage();
+  }
+});
   document.getElementById("user-input").addEventListener("input",function(){this.style.height="auto";this.style.height=Math.min(this.scrollHeight,130)+"px";});
   setupSTT();
 });
@@ -873,7 +878,9 @@ async function sendMessage(){
   if(!query||isStreaming)return;
   isStreaming=true;
   const sendBtn=document.querySelector(".send-btn");
-  input.disabled=true;sendBtn.disabled=true;input.placeholder="Waiting for response…";
+  input.disabled = false;  // allow typing
+  sendBtn.disabled = true;  // but block send button
+  input.placeholder = "Processing… press Enter when ready";
   switchTab("chat");
   const timeStr=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
   messages.push({role:"user",content:query,time:timeStr});
