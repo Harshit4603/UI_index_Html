@@ -757,19 +757,31 @@ function fmt(text){
     ).join('');
     return `<ul style="padding-left:18px;margin:6px 0;list-style:disc;">${items}</ul>`;
   });
-  // Tables BEFORE line breaks
-  text = text.replace(/\|(.+)\|\n\|[-| :]+\|\n((?:\|.+\|\n?)+)/g, match => {
-    const rows = match.trim().split('\n');
-    const headers = rows[0].split('|').filter(c => c.trim()).map(c =>
-      `<th style="padding:8px 12px;text-align:left;font-size:0.75rem;font-weight:600;color:var(--muted);border-bottom:2px solid var(--border-2);white-space:nowrap;">${c.trim()}</th>`
-    ).join('');
-    const body = rows.slice(2).map(row => {
-      const cells = row.split('|').filter(c => c.trim()).map(c =>
-        `<td style="padding:8px 12px;font-size:0.8rem;border-bottom:1px solid var(--border);color:var(--ink);">${c.trim()}</td>`
-      ).join('');
-      return `<tr onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background=''">${cells}</tr>`;
-    }).join('');
-    return `<div style="overflow-x:auto;margin:10px 0;border-radius:10px;border:1px solid var(--border);"><table style="width:100%;border-collapse:collapse;"><thead><tr>${headers}</tr></thead><tbody>${body}</tbody></table></div>`;
+  // Tables — normalize \r\n and handle missing trailing newline
+  text = text.replace(/((^\|.+\|[ \t]*\n?)+)/gm, match => {
+    const rows = match.trim().split('\n').filter(r => r.trim().startsWith('|'));
+    if (rows.length < 2) return match;
+    const isSep = r => /^\|[\s\-\|:]+\|$/.test(r.trim());
+    const headerRow = rows[0];
+    const bodyRows = rows.slice(1).filter(r => !isSep(r));
+    if (!bodyRows.length) return match;
+
+    const parseRow = (row, tag) =>
+      '<tr>' + row.split('|')
+        .filter((_, i, a) => i !== 0 && i !== a.length - 1)
+        .map(c => `<${tag} style="padding:8px 12px;font-size:${tag==='th'?'0.75rem':'0.8rem'};font-weight:${tag==='th'?'600':'400'};color:${tag==='th'?'var(--muted)':'var(--ink)'};border-bottom:${tag==='th'?'2px solid var(--border-2)':'1px solid var(--border)'};white-space:${tag==='th'?'nowrap':'normal'};">${c.trim()}</${tag}>`)
+        .join('') + '</tr>';
+
+    return `<div style="overflow-x:auto;margin:10px 0;border-radius:10px;border:1px solid var(--border);">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>${parseRow(headerRow,'th')}</thead>
+        <tbody>${bodyRows.map(r => `<tr onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background=''">${
+          r.split('|').filter((_,i,a) => i!==0 && i!==a.length-1)
+            .map(c => `<td style="padding:8px 12px;font-size:0.8rem;border-bottom:1px solid var(--border);color:var(--ink);">${c.trim()}</td>`)
+            .join('')
+        }</tr>`).join('')}</tbody>
+      </table>
+    </div>`;
   });
   // Line breaks LAST
   text = text.replace(/\n/g,'<br>');
