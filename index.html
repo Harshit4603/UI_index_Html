@@ -757,6 +757,22 @@ function fmt(text){
     ).join('');
     return `<ul style="padding-left:18px;margin:6px 0;list-style:disc;">${items}</ul>`;
   });
+
+// Tables
+text = text.replace(/\|(.+)\|\n\|[-| :]+\|\n((?:\|.+\|\n?)+)/g, match => {
+  const rows = match.trim().split('\n');
+  const headers = rows[0].split('|').filter(c => c.trim()).map(c =>
+    `<th style="padding:8px 12px;text-align:left;font-size:0.75rem;font-weight:600;color:var(--muted);border-bottom:2px solid var(--border-2);white-space:nowrap;">${c.trim()}</th>`
+  ).join('');
+  const body = rows.slice(2).map(row => {
+    const cells = row.split('|').filter(c => c.trim()).map(c =>
+      `<td style="padding:8px 12px;font-size:0.8rem;border-bottom:1px solid var(--border);color:var(--ink);">${c.trim()}</td>`
+    ).join('');
+    return `<tr style="transition:background 0.15s;" onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background=''">${cells}</tr>`;
+  }).join('');
+  return `<div style="overflow-x:auto;margin:10px 0;border-radius:10px;border:1px solid var(--border);"><table style="width:100%;border-collapse:collapse;"><thead><tr>${headers}</tr></thead><tbody>${body}</tbody></table></div>`;
+});
+  
   // Line breaks
   text = text.replace(/\n/g,'<br>');
   text = text.replace(/(<br>){3,}/g,'<br><br>');
