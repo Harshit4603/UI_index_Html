@@ -741,8 +741,8 @@ function deleteChat(id){if(!confirm("Delete this conversation?"))return;delete c
 function clearAllChats(){if(!confirm("Clear ALL conversations?"))return;chatHistory={};saveData();newChat();}
 
 function fmt(text){
-  // Headers
-  text = text.replace(/^### (.+)$/gm,'<div style="font-size:0.82rem;font-weight:700;color:var(--ink);margin:10px 0 4px;letter-spacing:0.01em;">$1</div>');
+  // Headers FIRST
+  text = text.replace(/^### (.+)$/gm,'<div style="font-size:0.82rem;font-weight:700;color:var(--ink);margin:10px 0 4px;">$1</div>');
   text = text.replace(/^## (.+)$/gm,'<div style="font-size:0.88rem;font-weight:700;color:var(--ink);margin:12px 0 5px;border-bottom:1px solid var(--border);padding-bottom:4px;">$1</div>');
   text = text.replace(/^# (.+)$/gm,'<div style="font-size:0.95rem;font-weight:700;color:var(--ink);margin:14px 0 6px;">$1</div>');
   // Bold & italic
@@ -750,35 +750,34 @@ function fmt(text){
   text = text.replace(/_(.*?)_/g,'<em>$1</em>');
   // Links
   text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,'<a href="$2" target="_blank" style="color:var(--teal-2);text-decoration:underline;">$1</a>');
-  // Bullets — wrap consecutive bullet lines in <ul>
+  // Bullets
   text = text.replace(/((?:^[•\-\*] .+$\n?)+)/gm, match => {
     const items = match.trim().split('\n').map(line =>
       `<li style="margin-bottom:5px;line-height:1.6;">${line.replace(/^[•\-\*] /,'')}</li>`
     ).join('');
     return `<ul style="padding-left:18px;margin:6px 0;list-style:disc;">${items}</ul>`;
   });
-
-// Tables
-text = text.replace(/\|(.+)\|\n\|[-| :]+\|\n((?:\|.+\|\n?)+)/g, match => {
-  const rows = match.trim().split('\n');
-  const headers = rows[0].split('|').filter(c => c.trim()).map(c =>
-    `<th style="padding:8px 12px;text-align:left;font-size:0.75rem;font-weight:600;color:var(--muted);border-bottom:2px solid var(--border-2);white-space:nowrap;">${c.trim()}</th>`
-  ).join('');
-  const body = rows.slice(2).map(row => {
-    const cells = row.split('|').filter(c => c.trim()).map(c =>
-      `<td style="padding:8px 12px;font-size:0.8rem;border-bottom:1px solid var(--border);color:var(--ink);">${c.trim()}</td>`
+  // Tables BEFORE line breaks
+  text = text.replace(/\|(.+)\|\n\|[-| :]+\|\n((?:\|.+\|\n?)+)/g, match => {
+    const rows = match.trim().split('\n');
+    const headers = rows[0].split('|').filter(c => c.trim()).map(c =>
+      `<th style="padding:8px 12px;text-align:left;font-size:0.75rem;font-weight:600;color:var(--muted);border-bottom:2px solid var(--border-2);white-space:nowrap;">${c.trim()}</th>`
     ).join('');
-    return `<tr style="transition:background 0.15s;" onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background=''">${cells}</tr>`;
-  }).join('');
-  return `<div style="overflow-x:auto;margin:10px 0;border-radius:10px;border:1px solid var(--border);"><table style="width:100%;border-collapse:collapse;"><thead><tr>${headers}</tr></thead><tbody>${body}</tbody></table></div>`;
-});
-  
-  // Line breaks
+    const body = rows.slice(2).map(row => {
+      const cells = row.split('|').filter(c => c.trim()).map(c =>
+        `<td style="padding:8px 12px;font-size:0.8rem;border-bottom:1px solid var(--border);color:var(--ink);">${c.trim()}</td>`
+      ).join('');
+      return `<tr onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background=''">${cells}</tr>`;
+    }).join('');
+    return `<div style="overflow-x:auto;margin:10px 0;border-radius:10px;border:1px solid var(--border);"><table style="width:100%;border-collapse:collapse;"><thead><tr>${headers}</tr></thead><tbody>${body}</tbody></table></div>`;
+  });
+  // Line breaks LAST
   text = text.replace(/\n/g,'<br>');
   text = text.replace(/(<br>){3,}/g,'<br><br>');
   return text;
 }
-function renderAnswer(content){
+
+  function renderAnswer(content){
   const words=content.split(' ');
   if(words.length<=60)return fmt(content);
   const preview=words.slice(0,60).join(' ');
