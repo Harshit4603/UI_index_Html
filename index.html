@@ -772,7 +772,9 @@ function fmt(text){
         .map(c => `<${tag} style="padding:8px 12px;font-size:${tag==='th'?'0.75rem':'0.8rem'};font-weight:${tag==='th'?'600':'400'};color:${tag==='th'?'var(--muted)':'var(--ink)'};border-bottom:${tag==='th'?'2px solid var(--border-2)':'1px solid var(--border)'};white-space:${tag==='th'?'nowrap':'normal'};">${c.trim()}</${tag}>`)
         .join('') + '</tr>';
 
-    return `<div style="overflow-x:auto;margin:10px 0;border-radius:10px;border:1px solid var(--border);">
+    return `<div style="overflow-x:auto;margin:10px 0;border-radius:10px;border:1px solid var(--border);position:relative;">
+
+   <button onclick="copyTable(this)" style="position:absolute;top:8px;right:8px;z-index:1;padding:4px 10px;border-radius:7px;font-size:0.68rem;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;background:var(--surface-2);border:1.5px solid var(--border-2);color:var(--muted);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-2)'"><i class="fa-solid fa-copy" style="font-size:0.65rem;margin-right:4px;"></i>Copy</button>
       <table style="width:100%;border-collapse:collapse;">
         <thead>${parseRow(headerRow,'th')}</thead>
         <tbody>${bodyRows.map(r => `<tr onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background=''">${
@@ -789,6 +791,31 @@ function fmt(text){
   return text;
 }
 
+function copyTable(btn) {
+  const table = btn.parentElement.querySelector('table');
+  const rows = [...table.querySelectorAll('tr')];
+
+  const tsv = rows.map(r =>
+    [...r.querySelectorAll('th,td')]
+      .map(c => c.innerText.trim())
+      .join('\t')
+  ).join('\n');
+
+  navigator.clipboard.writeText(tsv).then(() => {
+    btn.innerHTML = '<i class="fa-solid fa-check" style="font-size:0.65rem;margin-right:4px;"></i>Copied';
+    
+    btn.style.borderColor = 'var(--teal)';
+    btn.style.color = 'var(--teal)';
+
+    setTimeout(() => {
+      btn.innerHTML = '<i class="fa-solid fa-copy" style="font-size:0.65rem;margin-right:4px;"></i>Copy';
+      
+      btn.style.borderColor = 'var(--border-2)';
+      btn.style.color = 'var(--muted)';
+    }, 2000);
+  });
+}
+  
   function renderAnswer(content){
   const words=content.split(' ');
   if(words.length<=60)return fmt(content);
