@@ -851,7 +851,15 @@ function renderMessages(){
       <div class="msg-avatar ${isUser?"user-av":"bot-av"}">${isUser?'<i class="fa-solid fa-user" style="font-size:0.72rem;"></i>':'◈'}</div>
       <div class="msg-body">
         <div class="msg-meta">${isUser?"You":"SalesAssist"} · ${msg.time||""}</div>
-        <div class="msg-bubble ${isUser?"user-bubble":"bot-bubble"}">${isUser?msg.content:renderAnswer(msg.content)}</div>
+        <div class="msg-bubble ${isUser?"user-bubble":"bot-bubble"}">
+  ${isUser ? msg.content : renderAnswer(msg.content)}
+  ${!isUser && msg.product_image ? `
+    <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px;">
+      <img src="${msg.product_image}" alt="Product Image"
+        style="width:100%;max-width:320px;border-radius:10px;border:1px solid var(--border);display:block;"
+        onerror="this.parentElement.style.display='none'"/>
+    </div>` : ''}
+</div>
         ${!isUser?`
           <div class="msg-actions">
             <button class="action-btn tts-listen-btn" onclick="startTTS(this,'${msg.content.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,' ')}')">
@@ -1006,12 +1014,12 @@ while (true) {
           if (bubble) bubble.innerHTML = fmt(messages[lastIdx].content);
 
         } else if (data.type === "done") {
-          // Finalise message with sources, followups etc.
-          messages[lastIdx].message_id = data.message_id;
-          messages[lastIdx].db_sources = data.db_sources || [];
-          messages[lastIdx].internet_sources = data.web_sources || [];
-          messages[lastIdx].followups = data.followups || [];
-          localStorage.setItem("session_id", data.session_id);
+  messages[lastIdx].message_id = data.message_id;
+  messages[lastIdx].db_sources = data.db_sources || [];
+  messages[lastIdx].internet_sources = data.web_sources || [];
+  messages[lastIdx].followups = data.followups || [];
+  messages[lastIdx].product_image = data.product_image || null;  // ← ADD
+  localStorage.setItem("session_id", data.session_id);
           if (chatHistory[currentChatId]) chatHistory[currentChatId].messages = messages;
           saveData();
           renderMessages();
