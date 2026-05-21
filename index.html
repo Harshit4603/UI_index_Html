@@ -423,6 +423,18 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--surface);color:
     </div>
     <div id="admin-clear-wrap" style="display:none;">
       <button class="admin-clear" onclick="clearAllChats()"><i class="fa-solid fa-trash fa-xs" style="margin-right:7px;"></i>Clear All Chats</button>
+      <div class="sidebar-bottom">
+  <div style="padding:8px 6px;margin-bottom:8px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
+    <div style="font-size:0.7rem;color:rgba(255,255,255,0.35);padding:0 4px;margin-bottom:4px;" id="sidebar-emp-name"></div>
+    <div style="font-size:0.63rem;color:rgba(255,255,255,0.2);padding:0 4px;" id="sidebar-emp-role"></div>
+  </div>
+  <button onclick="logout()" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:8px;cursor:pointer;transition:all 0.15s;border:none;background:rgba(239,68,68,0.07);color:rgba(239,68,68,0.7);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:600;">
+    <div style="width:32px;height:32px;flex-shrink:0;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;background:rgba(239,68,68,0.1);color:rgba(239,68,68,0.7);">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </div>
+    <span class="ni-label" style="color:rgba(239,68,68,0.7);">Log Out</span>
+  </button>
+</div>
     </div>
     <div id="chat-history"></div>
     <div id="saved-list" style="display:none;"></div>
@@ -581,6 +593,35 @@ const STARTERS=[
   {icon:"📋",q:"Walk me through the 100-night trial process",sub:"Trial & returns"},
 ];
 
+async function logout() {
+  if (!confirm("Are you sure you want to log out?")) return;
+
+  try {
+    await fetch(`${BACKEND_URL}/logout`, { method: "POST" });
+  } catch {}
+
+  // Clear all auth state
+  localStorage.removeItem("employee_id");
+  localStorage.removeItem("employee_name");
+  localStorage.removeItem("role");
+  localStorage.removeItem("session_id");
+  localStorage.removeItem("active_chat_id");
+
+  // Reset UI
+  document.getElementById("app").style.display = "none";
+  document.getElementById("login-screen").style.display = "flex";
+  document.getElementById("login-email").value = "";
+  document.getElementById("login-password").value = "";
+  document.getElementById("login-error").style.display = "none";
+
+  // Reset in-memory state
+  messages = [];
+  chatHistory = {};
+  currentChatId = null;
+  currentRole = "rep";
+  isStreaming = false;
+}
+
 async function handleLogin(){
   const email=document.getElementById("login-email").value.trim();
   const pass=document.getElementById("login-password").value.trim();
@@ -685,6 +726,9 @@ function filterSaved(query) {
 }  
 
 function switchRole(role){
+  // Populate user info in sidebar
+  document.getElementById("sidebar-emp-name").textContent = localStorage.getItem("employee_name") || "Sales Rep";
+  document.getElementById("sidebar-emp-role").textContent = (localStorage.getItem("role") || "rep").toUpperCase();
   const actualRole = localStorage.getItem("role");
 
   // Block role escalation — non-admins cannot switch to admin
