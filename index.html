@@ -685,6 +685,14 @@ function filterSaved(query) {
 }  
 
 function switchRole(role){
+  const actualRole = localStorage.getItem("role");
+
+  // Block role escalation — non-admins cannot switch to admin
+  if(role === "admin" && actualRole !== "admin") {
+    toast("⛔ Admin access restricted");
+    return;
+  }
+
   currentRole=role;
   document.getElementById("btn-rep").classList.toggle("active",role==="rep");
   document.getElementById("btn-admin").classList.toggle("active",role==="admin");
@@ -1126,6 +1134,10 @@ window.onload=()=>{
   document.getElementById("login-screen").style.display="none";
   document.getElementById("app").style.display="flex";
   switchRole(role==="admin"?"admin":"rep");
+  // Hide Admin tab entirely for non-admin users
+  if(localStorage.getItem("role") !== "admin") {
+    document.getElementById("btn-admin").style.display = "none";
+  }
   if(localStorage.getItem("session_id")){
     currentChatId="c_restored";
     messages=[];
